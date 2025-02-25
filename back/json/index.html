@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista de Productos</title>
+</head>
+<body>
+  <h1>Productos Disponibles</h1>
+  <ul id="lista-productos"></ul>
+
+  <script>
+    // Obtener productos desde PHP
+    fetch('productos.php')
+      .then(response => response.json())
+      .then(productos => {
+        const lista = document.getElementById('lista-productos');
+        productos.forEach(producto => {
+          const item = document.createElement('li');
+          item.textContent = `${producto.nombre} - $${producto.precio}`;
+          lista.appendChild(item);
+        });
+      })
+      .catch(error => console.error('Error:', error));
+  </script>
+</body>
+</html>

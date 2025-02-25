@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prueba de Notificaciones de Errores</title>
+</head>
+<body>
+  <h1>Prueba de Notificaciones Internas para Errores JS</h1>
+
+  <button onclick="provocarError()">Provocar Error</button>
+  <button onclick="provocarErrorPromesa()">Error en Promesa</button>
+
+  <!-- Incluir el manejador de errores -->
+  <script src="/1020/app/assets/js/errorHandler.js"></script>
+
+  <script>
+    function provocarError() {
+      undefinedFunction(); // Error capturado y notificado
+    }
+
+    function provocarErrorPromesa() {
+      Promise.reject(new Error('Promesa rechazada sin catch'));
+    }
+  </script>
+</body>
+</html>
