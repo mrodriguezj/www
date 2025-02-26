@@ -95,10 +95,11 @@ CREATE TABLE pagos_realizados (
     monto_pagado DECIMAL(10,2) NOT NULL COMMENT 'Monto total pagado en esta transacción.',
 
     categoria_pago ENUM('Enganche', 'Contado', 'Mensualidad', 'Anualidad') NOT NULL COMMENT 'Categoría del pago realizado.',
-
     metodo_pago ENUM('Deposito', 'Efectivo', 'Transferencia') NOT NULL COMMENT 'Método utilizado para realizar el pago.',
+
     referencia_pago VARCHAR(50) COMMENT 'Folio o referencia bancaria del pago.',
-    
+    estatus_pago ENUM('Procesado', 'Rechazado', 'Pendiente') DEFAULT 'Procesado' COMMENT 'Estado de validación del pago.',
+
     observaciones TEXT COMMENT 'Comentarios adicionales del pago.',
 
     -- Relaciones
@@ -106,4 +107,24 @@ CREATE TABLE pagos_realizados (
 );
 
 
+CREATE TABLE pagos_anteriores_referencia (
+    id_referencia INT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único de la referencia.',
 
+    id_pago_actual INT UNSIGNED NOT NULL COMMENT 'Identificador del pago en el sistema actual.',
+    id_pago_anterior INT UNSIGNED NOT NULL COMMENT 'Identificador del pago en el sistema anterior.',
+
+    observaciones TEXT COMMENT 'Notas u observaciones sobre la relación entre pagos.',
+
+    -- Relaciones
+    CONSTRAINT fk_pago_actual FOREIGN KEY (id_pago_actual) REFERENCES pagos_realizados(id_pago)
+);
+
+
+CREATE TABLE pagos_mensualidades_relacion (
+    id_relacion INT AUTO_INCREMENT PRIMARY KEY,
+    id_pago INT UNSIGNED NOT NULL,
+    id_calendario INT UNSIGNED NOT NULL,
+    monto_asignado DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_pago FOREIGN KEY (id_pago) REFERENCES pagos_realizados(id_pago),
+    CONSTRAINT fk_calendario FOREIGN KEY (id_calendario) REFERENCES calendario_pagos(id_calendario)
+);
