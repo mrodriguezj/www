@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Pago</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!--<link rel="stylesheet" href="styles.css">-->
+</head>
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-lg">
+        <h2 class="text-xl font-bold mb-4">Registro de Pago</h2>
+
+        <form id="pagoForm">
+            <label class="block">ID Lote (*)</label>
+            <input type="number" id="id_lote" class="w-full p-2 border rounded mb-2" required>
+
+            <label class="block">Concepto (*)</label>
+            <select id="concepto" class="w-full p-2 border rounded mb-2" required>
+                <option value="" disabled selected>Selecciona un concepto</option>
+                <option value="Enganche">Enganche</option>
+                <option value="Mensualidad">Mensualidad</option>
+                <option value="Abono">Abono</option>
+                <option value="Anualidad">Anualidad</option>
+                <option value="Contado">Contado</option>
+            </select>
+
+            <label class="block">Monto (*)</label>
+            <input type="number" id="monto" class="w-full p-2 border rounded mb-2" step="0.01" min="0.01" required>
+
+            <label class="block">Fecha de Pago (*)</label>
+            <input type="date" id="fecha_pago" class="w-full p-2 border rounded mb-2" required>
+
+            <label class="block">Método de Pago (*)</label>
+            <select id="metodo_pago" class="w-full p-2 border rounded mb-2" required>
+                <option value="" disabled selected>Selecciona un método de pago</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Deposito">Depósito</option>
+            </select>
+
+            <label class="block">Folio de Pago</label>
+            <input type="text" id="folio_pago" class="w-full p-2 border rounded mb-2">
+
+            <label class="block">Banco (*)</label>
+            <select id="banco" class="w-full p-2 border rounded mb-2" required>
+                <option value="" disabled selected>Selecciona un banco</option>
+                <option value="Azteca">Banco Azteca</option>
+                <option value="Bancoppel">Bancoppel</option>
+                <option value="Banjercito">Banjercito</option>
+                <option value="Banorte">Banorte</option>
+                <option value="BBVA">BBVA</option>
+                <option value="Citibanamex">Citibanamex</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="HSBC">HSBC</option>
+                <option value="MercadoPago">MercadoPago</option>
+                <option value="Santander">Santander</option>
+                <option value="Scotiabank">Scotiabank</option>
+                <option value="Otros">Otros</option>
+            </select>
+
+            <label class="block">Periodo de Pago (*)</label>
+            <select id="periodo_pago" class="w-full p-2 border rounded mb-2" required>
+                <option value="" disabled selected>Selecciona un periodo de pago</option>
+                <option value="2024-04">Abril 2024</option>
+                <option value="2024-05">Mayo 2024</option>
+                <option value="2024-06">Junio 2024</option>
+                <option value="2024-07">Julio 2024</option>
+                <option value="2024-08">Agosto 2024</option>
+                <option value="2024-09">Septiembre 2024</option>
+                <option value="2024-10">Octubre 2024</option>
+                <option value="2024-11">Noviembre 2024</option>
+                <option value="2024-12">Diciembre 2024</option>
+                <option value="2025-01">Enero 2025</option>
+                <option value="2025-02">Febrero 2025</option>
+                <option value="2025-03">Marzo 2025</option>
+                <option value="2025-04">Abril 2025</option>
+                <option value="2025-05">Mayo 2025</option>
+            </select>
+
+            <label class="block">Observaciones</label>
+            <textarea id="observaciones" class="w-full p-2 border rounded mb-2"></textarea>
+
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded">Registrar Pago</button>
+        </form>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white p-4 rounded-lg shadow-md w-96">
+            <h3 id="modal-title" class="text-lg font-bold"></h3>
+            <p id="modal-message" class="mt-2"></p>
+            <button onclick="closeModal()" class="mt-4 bg-blue-500 text-white p-2 rounded w-full">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

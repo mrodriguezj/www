@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar Estado de Cuenta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 class="text-xl font-bold mb-4 text-center">Estado de Cuenta</h2>
+
+        <form id="estadoCuentaForm">
+            <label class="block mb-2">ID Lote:</label>
+            <input type="number" id="id_lote" class="w-full p-2 border rounded mb-4" required>
+
+            <label class="block mb-2">Fecha Inicial:</label>
+            <input type="date" id="fecha_inicio" class="w-full p-2 border rounded mb-4" required>
+
+            <label class="block mb-2">Número de Meses:</label>
+            <input type="number" id="num_eventos" class="w-full p-2 border rounded mb-4" required>
+
+            <label class="block mb-2">Nombre del Cliente:</label>
+            <input type="text" id="nombre_cliente" class="w-full p-2 border rounded mb-4" required>
+
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded">Generar Estado de Cuenta</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("estadoCuentaForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let idLote = document.getElementById("id_lote").value;
+            let fechaInicio = document.getElementById("fecha_inicio").value;
+            let numEventos = document.getElementById("num_eventos").value;
+            let nombreCliente = document.getElementById("nombre_cliente").value; // Nuevo campo
+
+            if (!idLote || !fechaInicio || !numEventos || !nombreCliente) {
+                alert("Por favor, complete todos los campos.");
+                return;
+            }
+
+            // Pasamos el nombre del cliente como parámetro en la URL
+            let url = `estado_cuenta_resultado.html?id_lote=${idLote}&fecha_inicio=${fechaInicio}&num_eventos=${numEventos}&nombre_cliente=${encodeURIComponent(nombreCliente)}`;
+
+            // Abrimos la nueva ventana con la tabla de resultados
+            window.open(url, "_blank");
+        });
+
+    </script>
+
+</body>
+</html>

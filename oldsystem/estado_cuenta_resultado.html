@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado de Cuenta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; } /* Ocultar botones al imprimir */
+            body { margin: 0; padding: 0; background: #1f3324 !important; color: #e0c18d !important; }
+            
+            .page {
+                width: 21cm;
+                height: 29.7cm;
+                padding: 2cm;
+                margin: 0;
+                background: #1f3324 !important; /* Verde oscuro */
+                color: #1f3324 !important; /* Dorado */
+                box-shadow: none !important;
+                border: none !important;
+            }
+    
+            /* Mantener bordes de la tabla */
+            table, th, td {
+                border: 1px solid #e0c18d !important;
+            }
+    
+            th {
+                background: #e0c18d !important; /* Fondo dorado */
+                color: #1f3324 !important; /* Texto verde oscuro */
+            }
+    
+            td {
+                background: #1f3324 !important; /* Fondo verde oscuro */
+                color: #e0c18d !important; /* Texto dorado */
+            }
+    
+            /* Estilos para el logotipo */
+            .logo-container {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+    
+            .logo-container img {
+                width: 150px;
+                height: auto;
+            }
+    
+            /* Ajustar los datos bancarios */
+            .bank-info {
+                background: #e0c18d !important; /* Fondo dorado */
+                color: #1f3324 !important; /* Texto verde oscuro */
+                padding: 10px;
+                border-radius: 5px;
+                text-align: center;
+            }
+        }
+    </style>
+    
+</head>
+<body class="bg-gray-100 flex flex-col items-center min-h-screen p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-md w-5/6 max-w-4xl page">
+        <!-- Encabezado -->
+        <div class="flex justify-between items-center border-b pb-4 mb-4">
+            <div>
+                <h1 class="text-4xl font-bold mb-2" style="color: #1f3324;">Bonaterra</h1>
+                <p class="text-sm">Supermanzana 058, Manzana 202, Lote 01. Isla Mujeres.</p>
+                <p class="text-sm">Tel: (998) 475-0985 | Email: cobranza.bonaterra@fomentoqroo.com</p>
+            </div>
+            <div>
+                <img src="/oldsystem/imprimir/logo.png" alt="Logo Empresa" class="w-24 h-24">
+            </div>
+        </div>
+
+        <!-- Datos del Cliente -->
+        <div class="bg-gray-100 p-4 rounded mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Estado de cuenta</h3>
+            <p><strong>Cliente:</strong> <span id="nombre_cliente">Cargando...</span></p>
+            <p><strong>Número de lote:</strong> <span id="num_propiedad">Cargando...</span></p>
+            <p><strong>Fecha de generación:</strong> <span id="fecha_generacion"></span></p>
+        </div>
+
+        <!-- Mensaje de Introducción -->
+        <div class="bg-gray-100 p-4 rounded mb-4 text-justify">
+            <p class="text-base text-gray-700">
+                Este documento refleja el estado actual de su cuenta. Hemos identificado pagos pendientes que requieren su atención. 
+                Mantener su cuenta al día es esencial para garantizar el correcto seguimiento de su inversión. 
+                Si ya ha realizado un pago recientemente o necesita asistencia, comuníquese con nosotros lo antes posible.
+            </p>
+        </div>
+
+        <!-- Título de la Tabla -->
+        <h3 class="text-lg text-gray-700 mb-2 text-left">Detalle de Pagos</h3>
+
+
+        <!-- Tabla de Estado de Cuenta -->
+        <table class="w-full border-collapse border border-gray-300 mb-4">
+            <thead>
+                <tr class="bg-blue-500 text-white">
+                    <th class="border border-gray-300 px-4 py-2">Periodo</th>
+                    <th class="border border-gray-300 px-4 py-2">Concepto</th>
+                    <th class="border border-gray-300 px-4 py-2">Estado</th>
+                    <th class="border border-gray-300 px-4 py-2">ID pago</th>
+                    <th class="border border-gray-300 px-4 py-2">Monto</th>
+                    <th class="border border-gray-300 px-4 py-2">Fecha pago</th>
+                    <th class="border border-gray-300 px-4 py-2">Método de pago</th>
+
+                </tr>
+            </thead>
+            <tbody id="tablaEstadoCuenta">
+                <tr>
+                    <td colspan="6" class="text-center p-4">Cargando datos...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Datos Bancarios para Pago -->
+        <!-- Datos Bancarios para Pago -->
+        <div class="mt-4 p-4 bg-gray-100 rounded">
+            <h3 class="text-lg font-semibold text-gray-700 mb-4 text-center">Datos bancarios para pago</h3>
+
+            <div class="flex flex-wrap justify-between">
+                <!-- Primera Cuenta -->
+                <div class="w-full md:w-1/2 p-2">
+                    <div class="bg-white p-4 rounded shadow">
+                        <p><strong>Banco:</strong> Banorte</p>
+                        <p><strong>Titular:</strong> Administrador Restaurantero Quintanarroense</p>
+                        <p><strong>Número de cuenta:</strong> 0268160678</p>
+                        <p><strong>Cuenta CLABE:</strong> 072691002681606789</p>
+                    </div>
+                </div>
+
+                <!-- Segunda Cuenta -->
+                <div class="w-full md:w-1/2 p-2">
+                    <div class="bg-white p-4 rounded shadow">
+                        <p><strong>Banco:</strong> Bankaool</p>
+                        <p><strong>Titular:</strong> Administrador Restaurantero Quintanarroense</p>
+                        <p><strong>Número de cuenta:</strong> 00110609</p>
+                        <p><strong>Cuenta CLABE:</strong> 147180000001106090</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Mensaje de Invitación al Pago -->
+        <div class="mt-4 p-4 bg-gray-100 rounded">
+            <p class="text-sm text-gray-700">
+                <strong>Nota:</strong> 
+                Este estado de cuenta muestra los pagos registrados hasta la fecha. Si ha realizado un pago recientemente y aún no se refleja, le invitamos a enviarnos su comprobante para su validación. Para cualquier consulta o asistencia, nuestro equipo está disponible para ayudarle.
+            </p>
+        </div>
+
+        <!-- Botón de Imprimir -->
+        <button onclick="window.print()" class="no-print mt-6 w-full bg-green-500 text-white py-2 px-4 rounded">
+            Imprimir Estado de Cuenta
+        </button>
+    </div>
+
+    <script>
+        // Obtener parámetros de la URL
+        const params = new URLSearchParams(window.location.search);
+        const idLote = params.get("id_lote");
+        const fechaInicio = params.get("fecha_inicio");
+        const numEventos = params.get("num_eventos");
+        const nombreCliente = params.get("nombre_cliente") ? decodeURIComponent(params.get("nombre_cliente")) : "Cliente No Registrado"; // Si no hay nombre, usar un genérico
+
+        // Fecha de generación
+        document.getElementById("fecha_generacion").textContent = new Date().toLocaleDateString();
+
+        // Simulación de datos de cliente
+        document.getElementById("nombre_cliente").textContent = nombreCliente;
+        document.getElementById("num_propiedad").textContent = idLote;
+
+        // Construir la URL de la API
+        const apiUrl = `/oldsystem/estado_cuenta.php?id_lote=${idLote}&fecha_inicio=${fechaInicio}&num_eventos=${numEventos}`;
+
+        fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+            let tbody = document.getElementById("tablaEstadoCuenta");
+            tbody.innerHTML = "";
+
+            if (data.error) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center text-red-500 p-4">${data.error}</td></tr>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-4">No hay datos disponibles.</td></tr>`;
+                return;
+            }
+
+            data.forEach(pago => {
+                let monto = isNaN(parseFloat(pago.monto)) ? "0.00" : new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(parseFloat(pago.monto));
+                let metodoPago = pago.metodo_pago ?? '-';
+
+                // 🔹 Convertir fecha a formato "DD-MM-YYYY"
+                let fechaPago = pago.fecha_pago ? new Date(pago.fecha_pago).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, '-') : '-';
+
+                let fila = `<tr class="text-sm md:text-base">
+                    <td class="border px-4 py-2">${pago.periodo_pago}</td>
+                    <td class="border px-4 py-2">${pago.concepto}</td>
+                    <td class="border px-4 py-2 text-${pago.estado === 'Pagado' ? 'green' : 'red'}-500">${pago.estado}</td>
+                    <td class="border px-4 py-2">${pago.id_pago ?? '-'}</td>                    
+                    <td class="border px-4 py-2">${monto}</td>
+                    <td class="border px-4 py-2">${fechaPago}</td>
+                    <td class="border px-4 py-2">${metodoPago}</td>    
+                </tr>`;
+                tbody.innerHTML += fila;
+            });
+        })
+        .catch(error => {
+            document.getElementById("tablaEstadoCuenta").innerHTML = `<tr><td colspan="7" class="text-center text-red-500 p-4">Error al cargar los datos.</td></tr>`;
+        });
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Pagos por Lote</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100 flex flex-col items-center min-h-screen p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-md w-4/5">
+        <h2 class="text-2xl font-bold mb-4 text-center">Consulta de Pagos por Lote</h2>
+
+        <!-- Input de Búsqueda -->
+        <div class="flex mb-4">
+            <input type="number" id="id_lote" class="w-full p-2 border rounded-l" placeholder="Ingrese el ID del Lote">
+            <button id="buscarPagos" class="bg-blue-500 text-white p-2 rounded-r">Buscar</button>
+        </div>
+
+        <!-- Tabla de Resultados con Ordenamiento -->
+        <div class="overflow-x-auto w-full">
+            <table class="w-full border-collapse border border-gray-300 shadow-lg" id="tabla">
+                <thead class="bg-blue-500 text-white text-lg">
+                    <tr>
+                        <th class="p-3 border cursor-pointer" onclick="ordenarTabla(0)">ID Pago</th>
+                        <th class="p-3 border cursor-pointer" onclick="ordenarTabla(1)">Concepto</th>
+                        <th class="p-3 border cursor-pointer" onclick="ordenarTabla(2)">Monto</th>
+                        <th class="p-3 border cursor-pointer" onclick="ordenarTabla(3)">Fecha de Pago</th>
+                        <th class="p-3 border cursor-pointer" onclick="ordenarTabla(4)">Método</th>
+                        <th class="p-3 border cursor-pointer" onclick="ordenarTabla(5)">Banco</th>
+                        <th class="p-3 border cursor-pointer" onclick="ordenarTabla(6)">Periodo</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaPagos" class="bg-white text-center">
+                    <tr><td colspan="7" class="p-4 text-gray-500">No hay datos</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal de Mensajes -->
+    <div id="modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-md w-96">
+            <h3 id="modal-title" class="text-xl font-bold"></h3>
+            <p id="modal-message" class="mt-2"></p>
+            <button onclick="closeModal()" class="mt-4 bg-blue-500 text-white p-2 rounded w-full">Cerrar</button>
+        </div>
+    </div>
+
+    <script src="consulta_lotes.js"></script>
+</body>
+</html>

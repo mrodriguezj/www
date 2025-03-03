@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Telefónica - Glassmorphism</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos de Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="w-full max-w-md glass p-6 rounded-2xl shadow-lg border border-gray-300 dark:border-gray-700 text-white">
+        <h2 class="text-2xl font-bold text-center mb-4">📖 Agenda Telefónica</h2>
+
+        <!-- Formulario -->
+        <form id="contactForm" class="space-y-4">
+            <div>
+                <label for="name" class="block text-sm font-medium">Nombre:</label>
+                <input type="text" id="name" class="w-full px-4 py-2 rounded-lg border border-white/50 bg-white/20 focus:ring-2 focus:ring-blue-300 text-white placeholder-white/80" placeholder="Ingresa un nombre" required>
+            </div>
+            <div>
+                <label for="phone" class="block text-sm font-medium">Teléfono:</label>
+                <input type="tel" id="phone" class="w-full px-4 py-2 rounded-lg border border-white/50 bg-white/20 focus:ring-2 focus:ring-blue-300 text-white placeholder-white/80" placeholder="Ejemplo: 555-1234" required>
+            </div>
+            <button type="submit" class="w-full bg-white/30 text-white py-2 rounded-lg shadow-md hover:bg-white/50 transition-all duration-300">
+                Agregar Contacto
+            </button>
+        </form>
+
+        <!-- Lista de Contactos -->
+        <h3 class="text-lg font-semibold mt-6">📋 Contactos Guardados:</h3>
+        <ul id="contactList" class="mt-2 space-y-2"></ul>
+    </div>
+
+    <script>
+        // Cargar contactos almacenados
+        document.addEventListener("DOMContentLoaded", loadContacts);
+
+        const contactForm = document.getElementById("contactForm");
+        const contactList = document.getElementById("contactList");
+
+        // Manejo del formulario
+        contactForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+
+            if (name && phone) {
+                addContact(name, phone);
+                saveContact(name, phone);
+                contactForm.reset();
+            }
+        });
+
+        // Agregar contacto a la lista
+        function addContact(name, phone) {
+            const li = document.createElement("li");
+            li.className = "glass p-3 rounded-lg flex justify-between items-center shadow-md border border-white/40 text-white";
+
+            li.innerHTML = `
+                <span><strong>${name}</strong> - ${phone}</span>
+                <button onclick="deleteContact(this)" class="bg-red-500 text-white px-3 py-1 rounded-lg shadow hover:bg-red-600 transition">❌</button>
+            `;
+
+            contactList.appendChild(li);
+        }
+
+        // Guardar contacto en LocalStorage
+        function saveContact(name, phone) {
+            let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+            contacts.push({ name, phone });
+            localStorage.setItem("contacts", JSON.stringify(contacts));
+        }
+
+        // Cargar contactos desde LocalStorage
+        function loadContacts() {
+            const contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+            contacts.forEach(contact => addContact(contact.name, contact.phone));
+        }
+
+        // Eliminar contacto
+        function deleteContact(button) {
+            const li = button.parentElement;
+            const name = li.querySelector("strong").textContent;
+            
+            let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+            contacts = contacts.filter(contact => contact.name !== name);
+            localStorage.setItem("contacts", JSON.stringify(contacts));
+
+            li.remove();
+        }
+    </script>
+
+</body>
+</html>

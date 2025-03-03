@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Pago</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!--<link rel="stylesheet" href="styles.css">-->
+</head>
+<body class="bg-gray-100 flex flex-col items-center min-h-screen p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-md w-4/5 max-w-lg">
+        <h2 class="text-2xl font-bold mb-4 text-center">Consulta de Pago</h2>
+
+        <!-- Input de Búsqueda -->
+        <label class="block font-semibold">ID de Pago</label>
+        <div class="flex mb-4">
+            <input type="number" id="id_pago" class="w-full p-2 border rounded-l" placeholder="Ingrese el ID">
+            <button id="buscarPago" class="bg-blue-500 text-white p-2 rounded-r">Buscar</button>
+        </div>
+
+        <!-- Formulario de Resultados (Campos Solo Lectura) -->
+        <form id="resultadoForm">
+            <label class="block font-semibold">ID Lote</label>
+            <input type="text" id="id_lote" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Concepto</label>
+            <input type="text" id="concepto" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Monto</label>
+            <input type="text" id="monto" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Fecha de Pago</label>
+            <input type="text" id="fecha_pago" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Método de Pago</label>
+            <input type="text" id="metodo_pago" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Folio de Pago</label>
+            <input type="text" id="folio_pago" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Banco</label>
+            <input type="text" id="banco" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Periodo de Pago</label>
+            <input type="text" id="periodo_pago" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly>
+
+            <label class="block font-semibold">Observaciones</label>
+            <textarea id="observaciones" class="w-full p-2 border rounded mb-2 bg-gray-200" readonly></textarea>
+        </form>
+    </div>
+
+<!-- Modal de Mensajes -->
+<div id="modal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center hidden">
+    <div class="bg-white p-6 rounded-lg shadow-md w-96">
+        <h3 id="modal-title" class="text-xl font-bold"></h3>
+        <p id="modal-message" class="mt-2"></p>
+        <button onclick="closeModal()" class="mt-4 bg-blue-500 text-white p-2 rounded w-full">Cerrar</button>
+    </div>
+</div>
+
+<script src="consulta.js"></script>
+</body>
+</html>
+

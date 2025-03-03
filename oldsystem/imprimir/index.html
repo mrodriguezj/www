@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recibo de Pago</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; } /* Ocultar el botón al imprimir */
+            body { margin: 0; padding: 0; }
+            .page {
+                width: 100%;
+                height: auto;
+                padding: 2cm;
+                margin: 0;
+                background: white;
+                box-shadow: none !important; /* 🔹 Elimina sombras */
+                border: none !important; /* 🔹 Elimina bordes */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen p-4">
+
+    <div class="bg-white p-6 rounded-lg shadow-md w-5/6 max-w-4xl page">
+        <!-- Encabezado -->
+        <div class="flex justify-between items-center border-b pb-4 mb-4">
+            <div>
+                <h2 class="text-2xl font-bold text-blue-700">Empresa XYZ</h2>
+                <p class="text-sm">Calle Falsa 123, Ciudad, País</p>
+                <p class="text-sm">Tel: (123) 456-7890</p>
+                <p class="text-sm font-semibold">Email: contacto@empresaxyz.com</p>
+            </div>
+            <div>
+                <img src="logo.png" alt="Logo Empresa" class="w-24 h-24">
+            </div>
+        </div>
+
+        <!-- Datos del Cliente y Pago -->
+        <div class="bg-gray-100 p-4 rounded mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Recibo de Pago</h3>
+            <p><strong>Fecha de Emisión:</strong> 27 de Febrero de 2025</p>
+            <p><strong>Cliente:</strong> Juan Pérez</p>
+            <p><strong>ID Lote:</strong> 1023</p>
+            <p><strong>Referencia:</strong> #REC-20250227-001</p>
+        </div>
+
+        <!-- Sello de Pagado -->
+        <div class="flex justify-end mb-4">
+            <img src="pagado.png" alt="Sello Pagado" class="w-36 opacity-70">
+        </div>
+
+        <!-- Tabla de Pago -->
+        <table class="w-full border-collapse border border-gray-300 mb-4">
+            <thead>
+                <tr class="bg-blue-500 text-white">
+                    <th class="border border-gray-300 px-4 py-2 text-left">Concepto</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Monto</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Fecha de Pago</th>
+                    <th class="border border-gray-300 px-4 py-2 text-left">Método</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="bg-gray-50">
+                    <td class="border border-gray-300 px-4 py-2">Mensualidad</td>
+                    <td class="border border-gray-300 px-4 py-2">$5,000.00</td>
+                    <td class="border border-gray-300 px-4 py-2">26/02/2025</td>
+                    <td class="border border-gray-300 px-4 py-2">Transferencia</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Resumen del Pago -->
+        <div class="text-right mb-4">
+            <p class="text-lg"><strong>Total Pagado: </strong> <span class="text-blue-600">$5,000.00</span></p>
+            <p class="text-sm text-gray-600">Monto con IVA incluido</p>
+        </div>
+
+        <!-- Firma -->
+        <div class="flex justify-between items-center mt-8">
+            <div class="text-center">
+                <hr class="border-t border-gray-400 w-48 mb-2">
+                <p class="text-sm">Firma del Cliente</p>
+            </div>
+            <div class="text-center">
+                <hr class="border-t border-gray-400 w-48 mb-2">
+                <p class="text-sm">Firma de la Empresa</p>
+            </div>
+        </div>
+
+        <!-- Nota -->
+        <div class="mt-6 p-4 bg-gray-100 rounded">
+            <p class="text-sm text-gray-700"><strong>Nota:</strong> Este documento es una constancia de pago y no tiene validez fiscal. Para comprobantes fiscales, favor de solicitar factura.</p>
+        </div>
+
+        <!-- Botón de Imprimir -->
+        <button onclick="window.print()" class="no-print mt-6 w-full bg-green-500 text-white py-2 px-4 rounded">
+            Imprimir Recibo
+        </button>
+    </div>
+
+</body>
+</html>

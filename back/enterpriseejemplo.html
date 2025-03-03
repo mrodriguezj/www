@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Telefónica - Enterprise UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos Material Design */
+        .elevation {
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1), 
+                        0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded-lg elevation">
+        <h2 class="text-2xl font-bold text-center mb-4 text-gray-800 dark:text-white">
+            📖 Agenda Telefónica
+        </h2>
+
+        <!-- Formulario -->
+        <form id="contactForm" class="space-y-6">
+            <div class="relative">
+                <label for="name" class="block text-sm font-medium text-gray-600 dark:text-gray-300">Nombre</label>
+                <input type="text" id="name" class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-white shadow-sm" placeholder="Ejemplo: Juan Pérez" required>
+            </div>
+
+            <div class="relative">
+                <label for="phone" class="block text-sm font-medium text-gray-600 dark:text-gray-300">Teléfono</label>
+                <input type="tel" id="phone" class="w-full px-4 py-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-gray-900 dark:text-white shadow-sm" placeholder="Ejemplo: 555-1234" required>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-md shadow-md hover:bg-blue-700 transition-all duration-300">
+                ➕ Agregar Contacto
+            </button>
+        </form>
+
+        <!-- Lista de Contactos -->
+        <h3 class="text-lg font-semibold mt-6 text-gray-800 dark:text-white">📋 Contactos Guardados:</h3>
+        <ul id="contactList" class="mt-3 space-y-3"></ul>
+    </div>
+
+    <script>
+        // Cargar contactos almacenados
+        document.addEventListener("DOMContentLoaded", loadContacts);
+
+        const contactForm = document.getElementById("contactForm");
+        const contactList = document.getElementById("contactList");
+
+        // Manejo del formulario
+        contactForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            const name = document.getElementById("name").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+
+            if (name && phone) {
+                addContact(name, phone);
+                saveContact(name, phone);
+                contactForm.reset();
+            }
+        });
+
+        // Agregar contacto a la lista
+        function addContact(name, phone) {
+            const li = document.createElement("li");
+            li.className = "bg-white dark:bg-gray-700 p-4 rounded-lg elevation flex justify-between items-center shadow-sm border border-gray-300 dark:border-gray-600";
+
+            li.innerHTML = `
+                <span class="text-gray-800 dark:text-white"><strong>${name}</strong> - ${phone}</span>
+                <button onclick="deleteContact(this)" class="bg-red-500 text-white px-3 py-1 rounded-md shadow-md hover:bg-red-600 transition">❌</button>
+            `;
+
+            contactList.appendChild(li);
+        }
+
+        // Guardar contacto en LocalStorage
+        function saveContact(name, phone) {
+            let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+            contacts.push({ name, phone });
+            localStorage.setItem("contacts", JSON.stringify(contacts));
+        }
+
+        // Cargar contactos desde LocalStorage
+        function loadContacts() {
+            const contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+            contacts.forEach(contact => addContact(contact.name, contact.phone));
+        }
+
+        // Eliminar contacto
+        function deleteContact(button) {
+            const li = button.parentElement;
+            const name = li.querySelector("strong").textContent;
+            
+            let contacts = JSON.parse(localStorage.getItem("contacts")) || [];
+            contacts = contacts.filter(contact => contact.name !== name);
+            localStorage.setItem("contacts", JSON.stringify(contacts));
+
+            li.remove();
+        }
+    </script>
+
+</body>
+</html>

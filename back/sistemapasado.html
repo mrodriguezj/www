@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Pagos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .required {
+            color: red;
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            padding: 10px;
+            border: none;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <form>
+        <h2>Registro de Pago</h2>
+
+        <label for="id_lote">ID Lote <span class="required">*</span></label>
+        <input type="number" id="id_lote" name="id_lote" required>
+
+        <label for="concepto">Concepto <span class="required">*</span></label>
+        <select id="concepto" name="concepto" required>
+            <option value="Enganche">Enganche</option>
+            <option value="Mensualidad">Mensualidad</option>
+            <option value="Abono">Abono</option>
+            <option value="Anualidad">Anualidad</option>
+            <option value="Contado">Contado</option>
+        </select>
+
+        <label for="monto">Monto <span class="required">*</span></label>
+        <input type="number" id="monto" name="monto" step="0.01" min="0.01" required>
+
+        <label for="fecha_pago">Fecha de Pago <span class="required">*</span></label>
+        <input type="date" id="fecha_pago" name="fecha_pago" required>
+
+        <label for="metodo_pago">Método de Pago <span class="required">*</span></label>
+        <select id="metodo_pago" name="metodo_pago" required>
+            <option value="Transferencia">Transferencia</option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Deposito">Depósito</option>
+        </select>
+
+        <label for="folio_pago">Folio de Pago</label>
+        <input type="text" id="folio_pago" name="folio_pago" maxlength="100">
+
+        <label for="banco">Banco <span class="required">*</span></label>
+        <select id="banco" name="banco" required>
+            <option value="Azteca">Banco Azteca</option>
+            <option value="Bancoppel">Bancoppel</option>
+            <option value="Banjercito">Banjercito</option>
+            <option value="Banorte">Banorte</option>
+            <option value="BBVA">BBVA</option>
+            <option value="Citibanamex">Citibanamex</option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="HSBC">HSBC</option>
+            <option value="MercadoPago">MercadoPago</option>
+            <option value="Santander">Santander</option>
+            <option value="Scotiabank">Scotiabank</option>
+            <option value="Otros">Otros</option>
+        </select>
+
+        <label for="periodo_pago">Periodo de Pago <span class="required">*</span></label>
+        <select id="periodo_pago" name="periodo_pago" required>
+            <option value="2024-04">Abril 2024</option>
+            <option value="2024-05">Mayo 2024</option>
+            <option value="2024-06">Junio 2024</option>
+            <option value="2024-07">Julio 2024</option>
+            <option value="2024-08">Agosto 2024</option>
+            <option value="2024-09">Septiembre 2024</option>
+            <option value="2024-10">Octubre 2024</option>
+            <option value="2024-11">Noviembre 2024</option>
+            <option value="2024-12">Diciembre 2024</option>
+            <option value="2025-01">Enero 2025</option>
+            <option value="2025-02">Febrero 2025</option>
+            <option value="2025-03">Marzo 2025</option>
+            <option value="2025-04">Abril 2025</option>
+            <option value="2025-05">Mayo 2025</option>
+            <option value="Enganche 1/1">Enganche 1/1</option>
+            <option value="Enganche 2/2">Enganche 2/2</option>
+            <option value="Enganche 3/3">Enganche 3/3</option>
+            <option value="Enganche 4/4">Enganche 4/4</option>
+            <option value="Enganche 1/2">Enganche 1/2</option>
+            <option value="Enganche 2/3">Enganche 2/3</option>
+            <option value="Enganche 3/4">Enganche 3/4</option>
+        </select>
+
+        <label for="observaciones">Observaciones</label>
+        <textarea id="observaciones" name="observaciones" rows="3" maxlength="250"></textarea>
+
+        <button type="submit">Registrar Pago</button>
+    </form>
+
+</body>
+</html>
