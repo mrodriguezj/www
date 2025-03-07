@@ -128,3 +128,14 @@ CREATE TABLE pagos_mensualidades_relacion (
     CONSTRAINT fk_pago FOREIGN KEY (id_pago) REFERENCES pagos_realizados(id_pago),
     CONSTRAINT fk_calendario FOREIGN KEY (id_calendario) REFERENCES calendario_pagos(id_calendario)
 );
+
+CREATE TABLE comisiones_ventas (
+    id_comision INT UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único de la comisión',
+    id_venta INT UNSIGNED NOT NULL COMMENT 'Referencia a la venta asociada',
+    id_vendedor INT UNSIGNED NOT NULL COMMENT 'Vendedor que generó la venta',
+    monto_comision DECIMAL(10,2) NOT NULL COMMENT 'Monto total de la comisión',
+    monto_pagado DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Monto total pagado de la comisión',
+    saldo_pendiente DECIMAL(10,2) NOT NULL COMMENT 'Monto restante por pagar al vendedor',
+    estatus ENUM('Pendiente', 'Parcial', 'Pagado') NOT NULL DEFAULT 'Pendiente' COMMENT 'Estatus de la comisión',
+    FOREIGN KEY (id_venta) REFERENCES ventas(id_venta)
+);
