@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Cliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Registrar Nuevo Cliente</h2>
+        
+        <form id="clienteForm" class="space-y-4">
+            <div>
+                <label for="nombres" class="block text-sm font-medium text-gray-700">Nombres:</label>
+                <input type="text" id="nombres" name="nombres" required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="apellido_paterno" class="block text-sm font-medium text-gray-700">Apellido Paterno:</label>
+                <input type="text" id="apellido_paterno" name="apellido_paterno" required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="apellido_materno" class="block text-sm font-medium text-gray-700">Apellido Materno:</label>
+                <input type="text" id="apellido_materno" name="apellido_materno"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="correo_electronico" class="block text-sm font-medium text-gray-700">Correo Electrónico:</label>
+                <input type="email" id="correo_electronico" name="correo_electronico" required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="telefono" class="block text-sm font-medium text-gray-700">Teléfono:</label>
+                <input type="text" id="telefono" name="telefono" required pattern="[0-9]{10}"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="curp" class="block text-sm font-medium text-gray-700">CURP:</label>
+                <input type="text" id="curp" name="curp" required maxlength="18"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="rfc" class="block text-sm font-medium text-gray-700">RFC:</label>
+                <input type="text" id="rfc" name="rfc" required maxlength="13"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label for="ine" class="block text-sm font-medium text-gray-700">INE:</label>
+                <input type="text" id="ine" name="ine" required maxlength="18"
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-200">
+                Registrar Cliente
+            </button>
+        </form>
+
+        <div id="responseMessage" class="mt-4 text-center font-semibold"></div>
+    </div>
+
+    <script src="clientes.js"></script>
+</body>
+</html>
