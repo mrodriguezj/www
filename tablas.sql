@@ -139,3 +139,17 @@ CREATE TABLE comisiones_ventas (
     estatus ENUM('Pendiente', 'Parcial', 'Pagado') NOT NULL DEFAULT 'Pendiente' COMMENT 'Estatus de la comisión',
     FOREIGN KEY (id_venta) REFERENCES ventas(id_venta)
 );
+
+--2.0
+
+CREATE TABLE historial_comisiones (
+    id_comision INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_pago INT UNSIGNED NOT NULL COMMENT 'Referencia al pago realizado',
+    id_lote INT UNSIGNED NOT NULL COMMENT 'Lote relacionado al pago',
+    porcentaje_comision DECIMAL(5,2) NOT NULL COMMENT 'Porcentaje de comisión aplicado al pago',
+    monto_comision DECIMAL(10,2) NOT NULL COMMENT 'Monto total de la comisión',
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación de la comisión',
+
+    CONSTRAINT fk_pago_comision FOREIGN KEY (id_pago) REFERENCES pagos_realizados(id_pago),
+    CONSTRAINT fk_lote_comision FOREIGN KEY (id_lote) REFERENCES propiedades(id_lote)
+);
