@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyección de Pagos (Live)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-8">
+
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Reporte de Proyección de Pagos</h1>
+
+    <!-- Rango de fechas -->
+    <div class="mb-6 flex flex-wrap gap-4 items-end">
+      <div>
+        <label class="block text-sm font-medium">Fecha Inicio</label>
+        <input type="date" id="fecha_inicio" class="border px-2 py-1 rounded" value="2025-03-01">
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Fecha Fin</label>
+        <input type="date" id="fecha_fin" class="border px-2 py-1 rounded" value="2025-03-31">
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Fecha Consulta</label>
+        <input type="date" id="fecha_consulta" class="border px-2 py-1 rounded" value="2025-03-10">
+      </div>
+      <button onclick="consultarProyeccion()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Consultar</button>
+    </div>
+
+    <!-- Resumen -->
+    <div class="grid grid-cols-4 gap-4 mb-8">
+      <div class="bg-blue-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Proyectado</p>
+        <p id="monto_proyectado" class="text-2xl font-bold">$0.00</p>
+      </div>
+      <div class="bg-green-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Cobrado</p>
+        <p id="monto_cobrado" class="text-2xl font-bold">$0.00</p>
+      </div>
+      <div class="bg-yellow-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Pendiente</p>
+        <p id="monto_pendiente" class="text-2xl font-bold">$0.00</p>
+      </div>
+      <div class="bg-red-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Vencido</p>
+        <p id="monto_vencido" class="text-2xl font-bold">$0.00</p>
+      </div>
+    </div>
+
+    <!-- Tabla detalle -->
+    <div class="bg-white shadow rounded-lg p-4">
+      <h2 class="text-xl font-semibold mb-4">Calendario de Pagos</h2>
+      <table class="min-w-full table-auto border-collapse">
+        <thead>
+          <tr class="bg-gray-200 text-left text-sm">
+            <th class="px-4 py-2">Cliente</th>
+            <th class="px-4 py-2">Lote</th>
+            <th class="px-4 py-2">Fecha Vencimiento</th>
+            <th class="px-4 py-2">Monto Programado</th>
+            <th class="px-4 py-2">Estado</th>
+            <th class="px-4 py-2">Días Atraso</th>
+            <th class="px-4 py-2">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla_pagos" class="text-sm">
+          <!-- Se carga dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal detalle pago -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full relative">
+      <button onclick="cerrarModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+      <h2 class="text-xl font-bold mb-4">Detalle de Pago</h2>
+      <div id="modal_contenido"></div>
+    </div>
+  </div>
+
+  <script src="proyeccion.js"></script>
+
+</body>
+</html>

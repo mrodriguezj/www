@@ -34,7 +34,15 @@ switch ($request) {
         break;
 
     case 'registrar_pago':
-        require'endpoints/registrar_pago.php';
+        require 'endpoints/registrar_pago.php';
+        break;
+
+    case 'proyeccion_pagos':
+        require 'endpoints/proyeccion_pagos.php';
+        break;
+    
+    case 'detalle_pago':
+        require 'endpoints/detalle_pago.php';
         break;
 
     default:
