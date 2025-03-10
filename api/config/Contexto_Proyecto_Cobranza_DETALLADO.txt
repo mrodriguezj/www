@@ -1,0 +1,149 @@
+
+📚 DOCUMENTACIÓN EXTENDIDA DEL PROYECTO COBRANZA
+
+1️⃣ INTRODUCCIÓN
+El sistema de CobranzaWeb es una solución integral para la gestión de ventas de terrenos y su correspondiente proceso de cobranza. Facilita el registro de clientes, ventas, generación de calendarios de pago, control de pagos realizados y cálculo de comisiones para vendedores. El objetivo es lograr un sistema robusto, seguro, modular y escalable.
+
+2️⃣ ARQUITECTURA GENERAL DEL SISTEMA
+🔷 Backend
+- Desarrollado en PHP usando PDO para la conexión con MySQL.
+- Todos los procedimientos de negocio están en la base de datos mediante Stored Procedures.
+- Endpoints PHP consumen procedimientos y responden en JSON.
+- Fuera de `public_html` por seguridad.
+
+🔷 Frontend
+- HTML5 + TailwindCSS para diseño responsive.
+- Formularios intuitivos y fáciles de usar.
+- JS modularizado para cada módulo (clientes.js, ventas.js, pagos.js).
+
+🔷 Base de Datos
+- MySQL/MariaDB normalizado.
+- Procedimientos almacenados garantizan la integridad de los datos.
+- Manejo de transacciones con COMMIT/ROLLBACK.
+- No se eliminan registros, se actualizan estados (Activo/Inactivo).
+
+🔷 Seguridad y Entorno
+- Variables de entorno en `.env` para configuración sensible.
+- Futuro soporte de JWT para autenticación y autorización.
+- Acceso al backend solo desde rutas protegidas.
+
+3️⃣ DESCRIPCIÓN DE LAS TABLAS
+
+🔸 clientes
+- Datos identificativos (CURP, RFC, INE) y de contacto.
+- Dirección en un solo campo de texto.
+- Estado del cliente (Activo/Inactivo).
+
+🔸 propiedades
+- Registro de lotes con dimensiones, precio, desarrollo, etapa y estado de disponibilidad.
+- Calles y etapas definidas.
+
+🔸 ventas
+- Registro de ventas incluyendo precio base, precio de lista, descuentos, precio de venta final, enganche, saldo restante, forma de pago, mensualidades y fechas clave.
+- Control del estado de la venta (Activa, Cancelada, Finalizada).
+
+🔸 calendario_pagos
+- Generación automática de pagos programados a partir de la venta.
+- Enganche, contado o mensualidades según la forma de pago.
+- Control de fechas límite y estado del pago (Pendiente, Pagado, Vencido).
+
+🔸 pagos_realizados
+- Registro de pagos hechos por clientes.
+- Relación con el lote, monto pagado, fecha, método y observaciones.
+
+🔸 pagos_mensualidades_relacion
+- Detalle de a qué mensualidades se ha aplicado un pago realizado.
+- Controla pagos parciales o anticipados.
+
+🔸 historial_comisiones
+- Registro de comisiones generadas a partir de pagos realizados.
+- No afecta la cobranza, es informativo y para control interno.
+
+🔸 referencia_pagos_anteriores
+- Tabla auxiliar para referenciar pagos del sistema anterior.
+
+4️⃣ PROCEDIMIENTOS ALMACENADOS PRINCIPALES
+
+🔹 insertar_cliente
+- Inserta un nuevo cliente.
+- Normaliza CURP, RFC, nombres y apellidos.
+
+🔹 registrar_venta_y_generar_calendario
+- Crea una venta.
+- Actualiza la propiedad a "Vendido".
+- Genera calendario de pagos acorde a la venta.
+
+🔹 registrar_pago
+- Registra el pago realizado.
+- Aplica el monto a los pagos pendientes en el calendario.
+- Actualiza los estados de pago.
+- Genera el registro de comisión.
+
+🔹 reportes_cobranza_mensual
+- Consulta de cobranza mensual esperada vs. recibida.
+
+5️⃣ ENDPOINTS DE API
+
+🔸 Estructura
+- index.php como router central.
+- Endpoints modularizados: clientes, ventas, pagos.
+
+🔸 Seguridad
+- Ubicación fuera de `public_html`.
+- Acceso controlado a través de una puerta de enlace.
+
+🔸 Ejemplos de Uso
+- POST /api/index.php?endpoint=registrar_cliente
+- POST /api/index.php?endpoint=registrar_venta
+- POST /api/index.php?endpoint=registrar_pago
+
+6️⃣ FORMULARIOS Y JS
+
+🔸 Clientes
+- Formulario horizontal, limpio y validado.
+- Validaciones en JS para tipos de datos y formatos.
+
+🔸 Ventas
+- Formulario detallado con precios calculados y campos bloqueados para consistencia.
+- Autocompletado de clientes y lotes mediante JSON.
+
+🔸 Pagos
+- Registro de pagos con porcentaje de comisión.
+- Autocompletado de lotes.
+- Confirmación visual del registro de pagos.
+
+7️⃣ FLUJO DE TRABAJO COMPLETO
+
+🔸 Flujo General
+1. Registrar cliente.
+2. Registrar propiedad.
+3. Registrar venta (se genera calendario y cambia estado del lote).
+4. Registrar pago (afecta calendario y registra comisiones).
+
+🔸 Casos de Negocio Contemplados
+- Enganche + Contado.
+- Enganche + Financiamiento.
+- Pagos adelantados o parciales.
+- Pagos vencidos y control de fechas límites.
+
+8️⃣ REGLAS DE NEGOCIO
+
+- Propiedades: Una vez vendidas, no se revenden.
+- Fechas de pagos siempre en el rango 1-30 (Febrero se ajusta a 28).
+- Comisiones se calculan a partir de cada pago.
+- Pagos anticipados aplican a mensualidades siguientes.
+
+9️⃣ BUENAS PRÁCTICAS
+
+- Seguridad por diseño (back fuera de public_html).
+- Variables de entorno en .env, nunca en el código.
+- Validación doble: cliente y servidor.
+- Procedimientos almacenados para lógica de negocio, no en el código PHP.
+
+🔟 FUTURAS MEJORAS
+
+- Implementación de JWT para usuarios y roles.
+- Dashboard de reportes en tiempo real.
+- Notificaciones automáticas (correo/WhatsApp).
+- Generación de estados de cuenta PDF/Excel.
+- Control de usuarios internos con permisos y auditoría.
