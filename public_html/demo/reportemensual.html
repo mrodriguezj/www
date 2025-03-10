@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proyección de Pagos (Demo)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-8">
+
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Reporte de Proyección de Pagos</h1>
+
+    <!-- Fecha de proyección -->
+    <div class="mb-6 flex items-center gap-4">
+      <label for="fecha_proyeccion" class="text-lg font-semibold">Fecha de proyección:</label>
+      <input type="date" id="fecha_proyeccion" class="border px-2 py-1 rounded" value="2025-03-10" onchange="actualizarReporte()">
+    </div>
+
+    <!-- Resumen de montos -->
+    <div class="grid grid-cols-4 gap-4 mb-8">
+      <div class="bg-blue-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Proyectado</p>
+        <p id="monto_proyectado" class="text-2xl font-bold">$0.00</p>
+      </div>
+      <div class="bg-green-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Cobrado</p>
+        <p id="monto_cobrado" class="text-2xl font-bold">$0.00</p>
+      </div>
+      <div class="bg-yellow-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Pendiente</p>
+        <p id="monto_pendiente" class="text-2xl font-bold">$0.00</p>
+      </div>
+      <div class="bg-red-100 p-4 rounded-lg shadow">
+        <p class="text-sm text-gray-500">Vencido</p>
+        <p id="monto_vencido" class="text-2xl font-bold">$0.00</p>
+      </div>
+    </div>
+
+    <!-- Detalle de pagos -->
+    <div class="bg-white shadow rounded-lg p-4">
+      <h2 class="text-xl font-semibold mb-4">Calendario de Pagos</h2>
+      <table class="min-w-full table-auto border-collapse">
+        <thead>
+          <tr class="bg-gray-200 text-left text-sm">
+            <th class="px-4 py-2">Cliente</th>
+            <th class="px-4 py-2">Lote</th>
+            <th class="px-4 py-2">Fecha Vencimiento</th>
+            <th class="px-4 py-2">Monto Programado</th>
+            <th class="px-4 py-2">Estado</th>
+            <th class="px-4 py-2">Días de Atraso</th>
+          </tr>
+        </thead>
+        <tbody id="tabla_pagos" class="text-sm">
+          <!-- Se carga dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Datos simulados (en la lógica real vendrían del backend)
+    const pagos = [
+      { cliente: 'Juan Pérez', lote: 'A1', fecha_vencimiento: '2025-03-05', monto: 5000, cobrado: true },
+      { cliente: 'Laura Méndez', lote: 'B2', fecha_vencimiento: '2025-03-10', monto: 4500, cobrado: false },
+      { cliente: 'Carlos Ruiz', lote: 'C3', fecha_vencimiento: '2025-03-10', monto: 6000, cobrado: false },
+      { cliente: 'Ana Torres', lote: 'D4', fecha_vencimiento: '2025-03-15', monto: 5500, cobrado: false },
+      { cliente: 'Miguel Flores', lote: 'E5', fecha_vencimiento: '2025-03-02', monto: 4000, cobrado: false }
+    ];
+
+    function actualizarReporte() {
+      const fechaProyeccion = new Date(document.getElementById('fecha_proyeccion').value);
+      let proyectado = 0, cobrado = 0, pendiente = 0, vencido = 0;
+
+      const cuerpoTabla = document.getElementById('tabla_pagos');
+      cuerpoTabla.innerHTML = '';
+
+      pagos.forEach(pago => {
+        const fechaVencimiento = new Date(pago.fecha_vencimiento);
+        const diasAtraso = Math.floor((fechaProyeccion - fechaVencimiento) / (1000 * 60 * 60 * 24));
+
+        let estado = '';
+        if (pago.cobrado) {
+          estado = 'Cobrado';
+          cobrado += pago.monto;
+        } else if (diasAtraso < 0) {
+          estado = 'Pendiente';
+          pendiente += pago.monto;
+        } else if (diasAtraso >= 0) {
+          estado = 'Vencido';
+          vencido += pago.monto;
+        }
+
+        proyectado += pago.monto;
+
+        cuerpoTabla.innerHTML += `
+          <tr class="border-b">
+            <td class="px-4 py-2">${pago.cliente}</td>
+            <td class="px-4 py-2">${pago.lote}</td>
+            <td class="px-4 py-2">${pago.fecha_vencimiento}</td>
+            <td class="px-4 py-2">$${pago.monto.toFixed(2)}</td>
+            <td class="px-4 py-2">${estado}</td>
+            <td class="px-4 py-2">${diasAtraso > 0 ? diasAtraso : 0}</td>
+          </tr>
+        `;
+      });
+
+      // Actualizamos los cuadros resumen
+      document.getElementById('monto_proyectado').innerText = `$${proyectado.toFixed(2)}`;
+      document.getElementById('monto_cobrado').innerText = `$${cobrado.toFixed(2)}`;
+      document.getElementById('monto_pendiente').innerText = `$${pendiente.toFixed(2)}`;
+      document.getElementById('monto_vencido').innerText = `$${vencido.toFixed(2)}`;
+    }
+
+    // Carga inicial
+    actualizarReporte();
+  </script>
+
+</body>
+</html>

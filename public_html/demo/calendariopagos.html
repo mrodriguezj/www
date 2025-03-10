@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendario de Cobranza (Demo)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-8">
+
+  <div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6">Calendario de Cobranza - Marzo 2025</h1>
+
+    <div id="calendar" class="grid grid-cols-7 gap-2">
+      <!-- Días se cargan dinámicamente -->
+    </div>
+  </div>
+
+  <!-- Modal de detalles -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-xl shadow-lg max-w-md w-full">
+      <h2 class="text-xl font-bold mb-4">Detalles del Día</h2>
+      <div id="modal-content"></div>
+      <button onclick="closeModal()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    // Datos simulados de pagos para Marzo 2025
+    const pagosPorDia = {
+      '2025-03-05': [
+        { cliente: 'Juan Pérez', lote: 'A1', monto: 5000, estatus: 'Pagado', diasAtraso: 0 },
+        { cliente: 'Laura Méndez', lote: 'B2', monto: 4500, estatus: 'Pendiente', diasAtraso: 0 }
+      ],
+      '2025-03-10': [
+        { cliente: 'Carlos Ruiz', lote: 'C3', monto: 6000, estatus: 'Vencido', diasAtraso: 3 }
+      ],
+      '2025-03-15': [
+        { cliente: 'Ana Torres', lote: 'D4', monto: 5500, estatus: 'Pagado', diasAtraso: 0 }
+      ]
+    };
+
+    const calendarContainer = document.getElementById('calendar');
+
+    function renderCalendar() {
+      const daysInMonth = 31;
+      const startDay = new Date('2025-03-01').getDay(); // 0: Domingo
+      const blankDays = startDay === 0 ? 6 : startDay - 1; // Para que el lunes sea el primer día
+
+      // Días en blanco al inicio
+      for (let i = 0; i < blankDays; i++) {
+        calendarContainer.innerHTML += `<div class="bg-transparent"></div>`;
+      }
+
+      // Días del mes
+      for (let day = 1; day <= daysInMonth; day++) {
+        const fecha = `2025-03-${day.toString().padStart(2, '0')}`;
+        const pagos = pagosPorDia[fecha] || [];
+        const totalPagos = pagos.length;
+        const vencidos = pagos.filter(p => p.estatus === 'Vencido').length;
+        const pagados = pagos.filter(p => p.estatus === 'Pagado').length;
+        const pendientes = pagos.filter(p => p.estatus === 'Pendiente').length;
+
+        let bgColor = 'bg-gray-200';
+        if (vencidos > 0) bgColor = 'bg-red-400';
+        else if (pendientes > 0) bgColor = 'bg-yellow-300';
+        else if (pagados > 0) bgColor = 'bg-green-400';
+
+        calendarContainer.innerHTML += `
+          <div onclick="openModal('${fecha}')" class="${bgColor} p-3 rounded shadow cursor-pointer hover:ring-2 hover:ring-blue-500 flex flex-col justify-between">
+            <div class="text-sm font-bold">${day}</div>
+            <div class="text-xs mt-2">
+              ${totalPagos} pagos
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function openModal(fecha) {
+      const modal = document.getElementById('modal');
+      const modalContent = document.getElementById('modal-content');
+      const pagos = pagosPorDia[fecha] || [];
+
+      if (pagos.length === 0) {
+        modalContent.innerHTML = '<p>No hay pagos programados.</p>';
+      } else {
+        modalContent.innerHTML = pagos.map(p => `
+          <div class="border-b py-2">
+            <p><strong>Cliente:</strong> ${p.cliente}</p>
+            <p><strong>Lote:</strong> ${p.lote}</p>
+            <p><strong>Monto:</strong> $${p.monto.toFixed(2)}</p>
+            <p><strong>Estado:</strong> ${p.estatus}${p.diasAtraso > 0 ? ` (${p.diasAtraso} días de atraso)` : ''}</p>
+          </div>
+        `).join('');
+      }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.add('hidden');
+    }
+
+    renderCalendar();
+  </script>
+</body>
+</html>
