@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Ventas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- HEADER -->
+    <header class="bg-indigo-600 text-white p-4 flex justify-between items-center">
+        <h1 class="text-xl font-bold">CobranzaWeb</h1>
+        <nav class="flex gap-4">
+            <a href="clientes.html" class="hover:text-gray-300">Clientes</a>
+            <a href="ventas.html" class="font-bold underline">Ventas</a>
+            <a href="pagos.html" class="hover:text-gray-300">Pagos</a>
+            <a href="#" class="hover:text-gray-300">Reportes</a>
+        </nav>
+    </header>
+
+    <main class="flex justify-center items-start p-8">
+        <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Registrar Nueva Venta</h2>
+
+            <form id="ventaForm" class="grid grid-cols-2 gap-6">
+
+                <!-- COLUMNA 1 -->
+                <div class="flex flex-col space-y-4">
+                    <!-- Cliente -->
+                    <div>
+                        <label for="buscar_cliente" class="block text-sm font-medium text-gray-700">Buscar Cliente:</label>
+                        <input type="text" id="buscar_cliente" placeholder="Nombre del cliente"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                        <input type="hidden" id="id_cliente" name="id_cliente">
+                    </div>
+
+                    <!-- Lote -->
+                    <div>
+                        <label for="buscar_lote" class="block text-sm font-medium text-gray-700">Buscar Lote:</label>
+                        <input type="text" id="buscar_lote" placeholder="ID o nombre del lote"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                        <input type="hidden" id="id_lote" name="id_lote">
+                    </div>
+
+                    <!-- Precio lote (readonly) -->
+                    <div>
+                        <label for="precio_lote" class="block text-sm font-medium text-gray-700">Precio Lote:</label>
+                        <input type="number" id="precio_lote" name="precio_lote" readonly
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm bg-gray-100">
+                    </div>
+
+                    <!-- Precio lista -->
+                    <div>
+                        <label for="precio_lista" class="block text-sm font-medium text-gray-700">Precio Lista:</label>
+                        <input type="number" step="0.01" id="precio_lista" name="precio_lista" required
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                    </div>
+
+                    <!-- Descuento -->
+                    <div>
+                        <label for="descuento" class="block text-sm font-medium text-gray-700">Descuento:</label>
+                        <input type="number" step="0.01" id="descuento" name="descuento"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                    </div>
+
+                    <!-- Autoriza descuento -->
+                    <div>
+                        <label for="autoriza_descuento" class="block text-sm font-medium text-gray-700">Autoriza Descuento:</label>
+                        <select id="autoriza_descuento" name="autoriza_descuento"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                            <option value="No aplica" selected>No aplica</option>
+                            <option value="L. Ibarra">L. Ibarra</option>
+                            <option value="Ingeniero">Ingeniero</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- COLUMNA 2 -->
+                <div class="flex flex-col space-y-4">
+                    <!-- Precio venta (readonly) -->
+                    <div>
+                        <label for="precio_venta" class="block text-sm font-medium text-gray-700">Precio Venta Final:</label>
+                        <input type="number" step="0.01" id="precio_venta" name="precio_venta" readonly
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm bg-gray-100">
+                    </div>
+
+                    <!-- Monto enganche -->
+                    <div>
+                        <label for="monto_enganche" class="block text-sm font-medium text-gray-700">Enganche:</label>
+                        <input type="number" step="0.01" id="monto_enganche" name="monto_enganche"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                    </div>
+
+                    <!-- Fecha pago enganche -->
+                    <div>
+                        <label for="fecha_pago_enganche" class="block text-sm font-medium text-gray-700">Fecha Pago Enganche:</label>
+                        <input type="date" id="fecha_pago_enganche" name="fecha_pago_enganche"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                    </div>
+
+                    <!-- Saldo restante (readonly) -->
+                    <div>
+                        <label for="saldo_restante" class="block text-sm font-medium text-gray-700">Saldo Restante:</label>
+                        <input type="number" step="0.01" id="saldo_restante" name="saldo_restante" readonly
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm bg-gray-100">
+                    </div>
+
+                    <!-- Forma de pago -->
+                    <div>
+                        <label for="forma_de_pago" class="block text-sm font-medium text-gray-700">Forma de Pago:</label>
+                        <select id="forma_de_pago" name="forma_de_pago"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm" required>
+                            <option value="Contado" selected>Contado</option>
+                            <option value="Financiamiento">Financiamiento</option>
+                        </select>
+                    </div>
+
+                    <!-- Campos de financiamiento -->
+                    <div id="financiamientoFields" class="hidden">
+                        <label for="plazo_meses" class="block text-sm font-medium text-gray-700">Plazo (Meses):</label>
+                        <input type="number" id="plazo_meses" name="plazo_meses" min="1"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+
+                        <label for="mensualidades" class="block text-sm font-medium text-gray-700">Monto Mensualidad:</label>
+                        <input type="number" step="0.01" id="mensualidades" name="mensualidades"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+
+                        <label for="fecha_inicio_pago" class="block text-sm font-medium text-gray-700">Fecha de Inicio de Pago:</label>
+                        <input type="date" id="fecha_inicio_pago" name="fecha_inicio_pago"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm">
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div>
+                        <label for="observaciones" class="block text-sm font-medium text-gray-700">Observaciones:</label>
+                        <textarea id="observaciones" name="observaciones"
+                            class="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm"></textarea>
+                    </div>
+                </div>
+
+                <!-- BOTÓN -->
+                <div class="col-span-2">
+                    <button type="submit"
+                        class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-md hover:bg-indigo-700 transition">
+                        Registrar Venta
+                    </button>
+                </div>
+            </form>
+
+            <div id="responseMessage" class="mt-4 text-center font-semibold"></div>
+        </div>
+    </main>
+
+    <script src="ventas.js"></script>
+</body>
+</html>
