@@ -30,8 +30,12 @@ switch ($request) {
         break;
 
     case 'registrar_venta_y_generar_calendario':
-            require 'endpoints/registrar_venta_y_generar_calendario.php';
-            break;
+        require 'endpoints/registrar_venta_y_generar_calendario.php';
+        break;
+
+    case 'registrar_pago':
+        require'endpoints/registrar_pago.php';
+        break;
 
     default:
         echo json_encode(["error" => "Endpoint no válido"]);
