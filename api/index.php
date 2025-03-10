@@ -29,6 +29,10 @@ switch ($request) {
         require 'endpoints/lotes_disponibles.php';
         break;
 
+    case 'registrar_venta_y_generar_calendario':
+            require 'endpoints/registrar_venta_y_generar_calendario.php';
+            break;
+
     default:
         echo json_encode(["error" => "Endpoint no válido"]);
         break;

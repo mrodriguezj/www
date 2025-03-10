@@ -2,61 +2,60 @@
 let clientes = [];
 let lotes = [];
 
-// Al cargar la página
+// Cargar datos iniciales
 window.addEventListener('DOMContentLoaded', () => {
     cargarClientes();
     cargarLotes();
-    inicializarInputsMoney();
 });
 
-// 1️⃣ Cargar clientes desde el endpoint
+// Cargar clientes desde API
 function cargarClientes() {
     fetch("http://localhost/api/index.php?endpoint=clientes_listado")
         .then(response => response.json())
         .then(data => {
             clientes = data;
         })
-        .catch(error => console.error("Error al cargar clientes:", error));
+        .catch(error => console.error("Error cargando clientes:", error));
 }
 
-// 2️⃣ Cargar lotes disponibles desde el endpoint
+// Cargar lotes disponibles desde API
 function cargarLotes() {
     fetch("http://localhost/api/index.php?endpoint=lotes_disponibles")
         .then(response => response.json())
         .then(data => {
             lotes = data;
-            console.log("Lotes cargados:", lotes); // Debug opcional
+            console.log("Lotes disponibles:", lotes);
         })
-        .catch(error => console.error("Error al cargar lotes:", error));
+        .catch(error => console.error("Error cargando lotes:", error));
 }
 
-// 3️⃣ Autocomplete - Clientes
+// Autocomplete para clientes
 const buscarClienteInput = document.getElementById("buscar_cliente");
 const idClienteHidden = document.getElementById("id_cliente");
 
-buscarClienteInput.addEventListener("input", function() {
-    const value = this.value.toLowerCase();
+buscarClienteInput.addEventListener("input", () => {
+    const valor = buscarClienteInput.value.toLowerCase();
     const sugerencias = clientes.filter(cliente => 
-        cliente.nombre_completo.toLowerCase().includes(value)
+        cliente.nombre_completo.toLowerCase().includes(valor)
     );
     mostrarSugerencias(sugerencias, buscarClienteInput, idClienteHidden);
 });
 
-// 4️⃣ Autocomplete - Lotes
+// Autocomplete para lotes
 const buscarLoteInput = document.getElementById("buscar_lote");
 const idLoteHidden = document.getElementById("id_lote");
 const precioLoteInput = document.getElementById("precio_lote");
+const precioListaInput = document.getElementById("precio_lista");
 
-buscarLoteInput.addEventListener("input", function() {
-    const value = this.value.toLowerCase();
+buscarLoteInput.addEventListener("input", () => {
+    const valor = buscarLoteInput.value.toLowerCase();
     const sugerencias = lotes.filter(lote => 
-        lote.descripcion.toLowerCase().includes(value)
+        lote.descripcion.toLowerCase().includes(valor)
     );
-    mostrarSugerencias(sugerencias, buscarLoteInput, idLoteHidden, precioLoteInput);
+    mostrarSugerenciasLotes(sugerencias);
 });
 
-// 5️⃣ Mostrar sugerencias para clientes y lotes
-function mostrarSugerencias(sugerencias, inputElement, hiddenElement, extraField = null) {
+function mostrarSugerencias(sugerencias, inputElement, hiddenElement) {
     let dropdown = document.getElementById("sugerencias_" + inputElement.id);
 
     if (!dropdown) {
@@ -73,23 +72,48 @@ function mostrarSugerencias(sugerencias, inputElement, hiddenElement, extraField
     sugerencias.forEach(item => {
         const li = document.createElement("li");
         li.className = "px-4 py-2 cursor-pointer hover:bg-indigo-100";
-        li.textContent = item.nombre_completo || item.descripcion;
+        li.textContent = item.nombre_completo;
 
         li.addEventListener("click", () => {
-            inputElement.value = item.nombre_completo || item.descripcion;
-            hiddenElement.value = item.id_cliente || item.id_lote;
+            inputElement.value = item.nombre_completo;
+            hiddenElement.value = item.id_cliente;
 
-            // Corrección clave: Asignamos el número crudo al campo
-            if (extraField && (item.precio !== undefined || item.precio_lote !== undefined)) {
-                const lotePrecio = item.precio !== undefined ? item.precio : item.precio_lote;
+            dropdown.innerHTML = "";
+        });
 
-                extraField.value = lotePrecio.toFixed(2);
-                document.getElementById("precio_lista").value = lotePrecio.toFixed(2);
+        dropdown.appendChild(li);
+    });
+}
 
-                calcularPrecioVenta();
-                inicializarInputsMoney(); // Refresca el formato después de la selección
-            }
+function mostrarSugerenciasLotes(sugerencias) {
+    let dropdown = document.getElementById("sugerencias_lotes");
 
+    if (!dropdown) {
+        dropdown = document.createElement("ul");
+        dropdown.id = "sugerencias_lotes";
+        dropdown.className = "absolute bg-white border rounded mt-1 max-h-40 overflow-y-auto shadow-lg z-10";
+
+        // Asignamos el ancho igual al input de búsqueda
+        dropdown.style.width = buscarLoteInput.offsetWidth + "px";
+
+        buscarLoteInput.parentNode.appendChild(dropdown);
+    }
+
+    dropdown.innerHTML = "";
+
+    sugerencias.forEach(lote => {
+        const li = document.createElement("li");
+        li.className = "px-4 py-2 cursor-pointer hover:bg-indigo-100 truncate";
+        li.textContent = lote.descripcion;
+
+        li.addEventListener("click", () => {
+            buscarLoteInput.value = lote.descripcion;
+            idLoteHidden.value = lote.id_lote;
+
+            precioLoteInput.value = lote.precio.toFixed(2);
+            precioListaInput.value = lote.precio.toFixed(2);
+
+            calcularPrecioVenta();
             dropdown.innerHTML = "";
         });
 
@@ -98,44 +122,13 @@ function mostrarSugerencias(sugerencias, inputElement, hiddenElement, extraField
 
     if (sugerencias.length === 0) {
         const noResult = document.createElement("li");
-        noResult.className = "px-4 py-2 text-gray-500";
+        noResult.className = "px-4 py-2 text-gray-500 truncate";
         noResult.textContent = "No encontrado";
         dropdown.appendChild(noResult);
     }
 }
 
-// 6️⃣ Inicializar los inputs de dinero con formato
-function inicializarInputsMoney() {
-    const moneyInputs = [
-        "precio_lote", "precio_lista", "descuento",
-        "precio_venta", "monto_enganche", "saldo_restante", "mensualidades"
-    ];
-
-    moneyInputs.forEach(id => {
-        const input = document.getElementById(id);
-
-        input.addEventListener("blur", () => {
-            const value = parseFloat(input.value.replace(/,/g, "")) || 0;
-            input.value = formatMoney(value);
-        });
-
-        input.addEventListener("focus", () => {
-            const numericValue = input.value.replace(/,/g, "");
-            input.value = numericValue;
-        });
-    });
-}
-
-// 7️⃣ Función que formatea el número a formato moneda
-function formatMoney(amount) {
-    return amount.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-}
-
-// 8️⃣ Cálculo de precio de venta y saldo restante
-const precioListaInput = document.getElementById("precio_lista");
+// Cálculo de precio de venta y saldo restante
 const descuentoInput = document.getElementById("descuento");
 const precioVentaInput = document.getElementById("precio_venta");
 const montoEngancheInput = document.getElementById("monto_enganche");
@@ -146,24 +139,24 @@ descuentoInput.addEventListener("input", calcularPrecioVenta);
 montoEngancheInput.addEventListener("input", calcularSaldoRestante);
 
 function calcularPrecioVenta() {
-    const precioLista = parseFloat(precioListaInput.value.replace(/,/g, "")) || 0;
-    const descuento = parseFloat(descuentoInput.value.replace(/,/g, "")) || 0;
+    const precioLista = parseFloat(precioListaInput.value) || 0;
+    const descuento = parseFloat(descuentoInput.value) || 0;
     const precioVenta = precioLista - descuento;
 
-    precioVentaInput.value = formatMoney(precioVenta);
+    precioVentaInput.value = precioVenta.toFixed(2);
 
     calcularSaldoRestante();
 }
 
 function calcularSaldoRestante() {
-    const precioVenta = parseFloat(precioVentaInput.value.replace(/,/g, "")) || 0;
-    const enganche = parseFloat(montoEngancheInput.value.replace(/,/g, "")) || 0;
+    const precioVenta = parseFloat(precioVentaInput.value) || 0;
+    const enganche = parseFloat(montoEngancheInput.value) || 0;
     const saldoRestante = precioVenta - enganche;
 
-    saldoRestanteInput.value = formatMoney(saldoRestante);
+    saldoRestanteInput.value = saldoRestante.toFixed(2);
 }
 
-// 9️⃣ Mostrar/ocultar campos de financiamiento
+// Mostrar/ocultar campos de financiamiento
 const formaPagoSelect = document.getElementById("forma_de_pago");
 const financiamientoFields = document.getElementById("financiamientoFields");
 
@@ -175,24 +168,25 @@ formaPagoSelect.addEventListener("change", function() {
     }
 });
 
-// 🔟 Enviar el formulario de venta al backend
+// Enviar el formulario al backend
 document.getElementById("ventaForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
     const formData = {
         id_cliente: parseInt(idClienteHidden.value),
         id_lote: parseInt(idLoteHidden.value),
-        precio_lote: parseFloat(precioLoteInput.value.replace(/,/g, "")),
-        precio_lista: parseFloat(precioListaInput.value.replace(/,/g, "")),
-        descuento: parseFloat(descuentoInput.value.replace(/,/g, "")),
+        fecha_venta: document.getElementById("fecha_venta").value,
+        precio_lote: parseFloat(precioLoteInput.value),
+        precio_lista: parseFloat(precioListaInput.value),
+        descuento: parseFloat(descuentoInput.value),
         autoriza_descuento: document.getElementById("autoriza_descuento").value,
-        precio_venta: parseFloat(precioVentaInput.value.replace(/,/g, "")),
-        monto_enganche: parseFloat(montoEngancheInput.value.replace(/,/g, "")),
+        precio_venta: parseFloat(precioVentaInput.value),
+        monto_enganche: parseFloat(montoEngancheInput.value),
         fecha_pago_enganche: document.getElementById("fecha_pago_enganche").value,
-        saldo_restante: parseFloat(saldoRestanteInput.value.replace(/,/g, "")),
+        saldo_restante: parseFloat(saldoRestanteInput.value),
         forma_de_pago: formaPagoSelect.value,
         plazo_meses: parseInt(document.getElementById("plazo_meses").value || 0),
-        mensualidades: parseFloat(document.getElementById("mensualidades").value.replace(/,/g, "")) || 0,
+        mensualidades: parseFloat(document.getElementById("mensualidades").value || 0),
         fecha_inicio_pago: document.getElementById("fecha_inicio_pago").value,
         observaciones: document.getElementById("observaciones").value
     };
