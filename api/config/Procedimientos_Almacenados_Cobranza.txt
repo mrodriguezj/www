@@ -1,0 +1,241 @@
+
+📚 DOCUMENTACIÓN DE PROCEDIMIENTOS ALMACENADOS - COBRANZA
+
+1️⃣ PROCEDIMIENTO insertar_cliente
+
+DELIMITER $$
+
+CREATE PROCEDURE insertar_cliente (
+    IN p_nombres VARCHAR(50),
+    IN p_apellido_paterno VARCHAR(50),
+    IN p_apellido_materno VARCHAR(50),
+    IN p_correo_electronico VARCHAR(100),
+    IN p_telefono CHAR(10),
+    IN p_curp CHAR(18),
+    IN p_rfc CHAR(13),
+    IN p_ine CHAR(18),
+    IN p_direccion VARCHAR(100),
+    IN p_estatus ENUM('Activo', 'Inactivo')
+)
+BEGIN
+    DECLARE mensaje VARCHAR(255);
+
+    -- Validar existencia de datos únicos
+    IF EXISTS (SELECT 1 FROM clientes WHERE correo_electronico = p_correo_electronico) THEN
+        SET mensaje = 'Error: El correo electrónico ya está registrado.';
+    ELSEIF EXISTS (SELECT 1 FROM clientes WHERE curp = p_curp) THEN
+        SET mensaje = 'Error: La CURP ya está registrada.';
+    ELSEIF EXISTS (SELECT 1 FROM clientes WHERE rfc = p_rfc) THEN
+        SET mensaje = 'Error: El RFC ya está registrado.';
+    ELSEIF EXISTS (SELECT 1 FROM clientes WHERE ine = p_ine) THEN
+        SET mensaje = 'Error: La INE ya está registrada.';
+    ELSE
+        INSERT INTO clientes (
+            nombres, apellido_paterno, apellido_materno,
+            correo_electronico, telefono, curp, rfc, ine, direccion, estatus
+        ) VALUES (
+            UPPER(p_nombres), UPPER(p_apellido_paterno), UPPER(p_apellido_materno),
+            LOWER(p_correo_electronico), p_telefono, UPPER(p_curp), UPPER(p_rfc),
+            UPPER(p_ine), UPPER(p_direccion), COALESCE(p_estatus, 'Activo')
+        );
+
+        SET mensaje = CONCAT('Cliente insertado correctamente con ID: ', LAST_INSERT_ID());
+    END IF;
+
+    SELECT mensaje AS resultado;
+END$$
+
+DELIMITER ;
+
+---------------------------------------------------------------
+
+2️⃣ PROCEDIMIENTO registrar_venta_y_generar_calendario
+
+DELIMITER $$
+
+CREATE PROCEDURE registrar_venta_y_generar_calendario (
+    IN p_id_cliente INT UNSIGNED,
+    IN p_id_lote INT UNSIGNED,
+    IN p_fecha_venta DATE,
+    IN p_precio_lote DECIMAL(10,2),
+    IN p_precio_lista DECIMAL(10,2),
+    IN p_descuento DECIMAL(10,2),
+    IN p_autoriza_descuento ENUM('L. Ibarra', 'Ingeniero', 'No aplica'),
+    IN p_precio_venta DECIMAL(10,2),
+    IN p_monto_enganche DECIMAL(10,2),
+    IN p_fecha_pago_enganche DATE,
+    IN p_saldo_restante DECIMAL(10,2),
+    IN p_forma_de_pago ENUM('Contado', 'Financiamiento'),
+    IN p_plazo_meses TINYINT UNSIGNED,
+    IN p_mensualidades DECIMAL(10,2),
+    IN p_fecha_inicio_pago DATE
+)
+BEGIN
+    DECLARE v_id_venta INT;
+    DECLARE contador INT DEFAULT 1;
+    DECLARE fecha_pago DATE;
+    DECLARE dia_pago INT;
+
+    START TRANSACTION;
+
+    BEGIN
+        INSERT INTO ventas (
+            id_cliente, id_lote, fecha_venta, precio_lote, precio_lista, descuento, 
+            autoriza_descuento, precio_venta, monto_enganche, fecha_pago_enganche, 
+            saldo_restante, forma_de_pago, plazo_meses, mensualidades, fecha_inicio_pago
+        ) VALUES (
+            p_id_cliente, p_id_lote, p_fecha_venta, p_precio_lote, p_precio_lista, p_descuento,
+            p_autoriza_descuento, p_precio_venta, p_monto_enganche, p_fecha_pago_enganche,
+            p_saldo_restante, p_forma_de_pago, p_plazo_meses, p_mensualidades, p_fecha_inicio_pago
+        );
+
+        SET v_id_venta = LAST_INSERT_ID();
+        SET dia_pago = DAY(p_fecha_inicio_pago);
+
+        UPDATE propiedades
+        SET disponibilidad = 'Vendido'
+        WHERE id_lote = p_id_lote;
+
+        IF p_monto_enganche > 0 THEN
+            INSERT INTO calendario_pagos (
+                id_lote, numero_pago, fecha_vencimiento, monto_programado, monto_restante, categoria_pago, estatus_pago
+            ) VALUES (
+                p_id_lote, 0, p_fecha_pago_enganche, p_monto_enganche, p_monto_enganche, 'Enganche', 'Pendiente'
+            );
+        END IF;
+
+        IF p_forma_de_pago = 'Contado' THEN
+            INSERT INTO calendario_pagos (
+                id_lote, numero_pago, fecha_vencimiento, monto_programado, monto_restante, categoria_pago, estatus_pago
+            ) VALUES (
+                p_id_lote, 1, p_fecha_inicio_pago, p_saldo_restante, p_saldo_restante, 'Contado', 'Pendiente'
+            );
+        ELSEIF p_forma_de_pago = 'Financiamiento' THEN
+            WHILE contador <= p_plazo_meses DO
+                SET fecha_pago = DATE_ADD(p_fecha_inicio_pago, INTERVAL (contador - 1) MONTH);
+
+                IF MONTH(fecha_pago) = 2 AND dia_pago > 28 THEN
+                    SET fecha_pago = DATE_FORMAT(CONCAT(YEAR(fecha_pago), '-02-28'), '%Y-%m-%d');
+                ELSE
+                    SET fecha_pago = DATE_FORMAT(CONCAT(YEAR(fecha_pago), '-', MONTH(fecha_pago), '-', LPAD(dia_pago, 2, '0')), '%Y-%m-%d');
+                END IF;
+
+                INSERT INTO calendario_pagos (
+                    id_lote, numero_pago, fecha_vencimiento, monto_programado, monto_restante, categoria_pago, estatus_pago
+                ) VALUES (
+                    p_id_lote, contador, fecha_pago, p_mensualidades, p_mensualidades, 'Mensualidad', 'Pendiente'
+                );
+
+                SET contador = contador + 1;
+            END WHILE;
+        END IF;
+
+        COMMIT;
+    END;
+END$$
+
+DELIMITER ;
+
+---------------------------------------------------------------
+
+3️⃣ PROCEDIMIENTO registrar_pago
+
+DELIMITER $$
+
+CREATE PROCEDURE registrar_pago (
+    IN p_id_lote INT UNSIGNED,
+    IN p_fecha_pago DATE,
+    IN p_monto_pagado DECIMAL(10,2),
+    IN p_categoria_pago ENUM('Enganche', 'Contado', 'Mensualidad', 'Anualidad'),
+    IN p_metodo_pago ENUM('Deposito', 'Efectivo', 'Transferencia'),
+    IN p_referencia_pago VARCHAR(50),
+    IN p_observaciones TEXT,
+    IN p_porcentaje_comision DECIMAL(5,2)
+)
+BEGIN
+    DECLARE v_id_pago INT;
+    DECLARE v_id_calendario INT;
+    DECLARE v_monto_restante DECIMAL(10,2);
+    DECLARE v_monto_aplicado DECIMAL(10,2);
+    DECLARE v_pago_restante DECIMAL(10,2);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION BEGIN ROLLBACK; END;
+
+    START TRANSACTION;
+
+    INSERT INTO pagos_realizados (
+        id_lote,
+        fecha_pago,
+        monto_pagado,
+        categoria_pago,
+        metodo_pago,
+        referencia_pago,
+        observaciones
+    ) VALUES (
+        p_id_lote,
+        p_fecha_pago,
+        p_monto_pagado,
+        p_categoria_pago,
+        p_metodo_pago,
+        p_referencia_pago,
+        p_observaciones
+    );
+
+    SET v_id_pago = LAST_INSERT_ID();
+    SET v_pago_restante = p_monto_pagado;
+
+    WHILE v_pago_restante > 0 DO
+        SELECT id_calendario, monto_restante
+        INTO v_id_calendario, v_monto_restante
+        FROM calendario_pagos
+        WHERE id_lote = p_id_lote AND estatus_pago = 'Pendiente'
+        ORDER BY fecha_vencimiento ASC
+        LIMIT 1;
+
+        IF v_id_calendario IS NULL THEN
+            SET v_pago_restante = 0;
+        ELSE
+            IF v_pago_restante >= v_monto_restante THEN
+                SET v_monto_aplicado = v_monto_restante;
+
+                UPDATE calendario_pagos
+                SET monto_restante = 0, estatus_pago = 'Pagado'
+                WHERE id_calendario = v_id_calendario;
+            ELSE
+                SET v_monto_aplicado = v_pago_restante;
+
+                UPDATE calendario_pagos
+                SET monto_restante = monto_restante - v_monto_aplicado
+                WHERE id_calendario = v_id_calendario;
+            END IF;
+
+            INSERT INTO pagos_mensualidades_relacion (
+                id_pago,
+                id_calendario,
+                monto_asignado
+            ) VALUES (
+                v_id_pago,
+                v_id_calendario,
+                v_monto_aplicado
+            );
+
+            SET v_pago_restante = v_pago_restante - v_monto_aplicado;
+        END IF;
+    END WHILE;
+
+    INSERT INTO historial_comisiones (
+        id_pago,
+        id_lote,
+        porcentaje_comision,
+        monto_comision
+    ) VALUES (
+        v_id_pago,
+        p_id_lote,
+        p_porcentaje_comision,
+        ROUND(p_monto_pagado * (p_porcentaje_comision / 100), 2)
+    );
+
+    COMMIT;
+END$$
+
+DELIMITER ;

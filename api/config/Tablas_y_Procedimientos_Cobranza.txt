@@ -1,0 +1,144 @@
+
+📚 DOCUMENTACIÓN DE TABLAS Y PROCEDIMIENTOS - COBRANZA
+
+1️⃣ TABLAS PRINCIPALES
+
+🔸 clientes
+CREATE TABLE clientes (
+    id_cliente INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    nombres VARCHAR(50) NOT NULL,
+    apellido_paterno VARCHAR(50) NOT NULL,
+    apellido_materno VARCHAR(50),
+    correo_electronico VARCHAR(100) NOT NULL UNIQUE,
+    telefono CHAR(10) NOT NULL,
+    curp CHAR(18) NOT NULL UNIQUE,
+    rfc CHAR(13) NOT NULL UNIQUE,
+    ine CHAR(18) NOT NULL UNIQUE,
+    direccion VARCHAR(100),
+    estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo'
+);
+
+🔸 propiedades
+CREATE TABLE propiedades (
+    id_lote INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    dimensiones DECIMAL(8,2) NOT NULL COMMENT 'Metros cuadrados',
+    precio DECIMAL(10,2) NOT NULL COMMENT 'Precio base del lote',
+    tipo ENUM('Premium', 'Regular', 'Comercial') NOT NULL,
+    disponibilidad ENUM('Disponible', 'Vendido', 'Reservado') NOT NULL DEFAULT 'Disponible',
+    desarrollo VARCHAR(50) NOT NULL,
+    etapa INT UNSIGNED NOT NULL,
+    calle VARCHAR(50) NOT NULL
+);
+
+🔸 ventas
+CREATE TABLE ventas (
+    id_venta INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_cliente INT UNSIGNED NOT NULL,
+    id_lote INT UNSIGNED NOT NULL,
+    fecha_venta DATE NOT NULL,
+    precio_lote DECIMAL(10,2) NOT NULL,
+    precio_lista DECIMAL(10,2) NOT NULL,
+    descuento DECIMAL(10,2) DEFAULT 0,
+    autoriza_descuento ENUM('L. Ibarra', 'Ingeniero', 'No aplica') DEFAULT 'No aplica',
+    precio_venta DECIMAL(10,2) NOT NULL,
+    monto_enganche DECIMAL(10,2) DEFAULT 0,
+    fecha_pago_enganche DATE,
+    saldo_restante DECIMAL(10,2),
+    forma_de_pago ENUM('Contado', 'Financiamiento') NOT NULL,
+    plazo_meses TINYINT UNSIGNED DEFAULT 0,
+    mensualidades DECIMAL(10,2) DEFAULT 0,
+    fecha_inicio_pago DATE,
+    estatus_venta ENUM('Activa', 'Cancelada', 'Finalizada') DEFAULT 'Activa',
+    observaciones TEXT,
+    fecha_captura TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_cliente_ventas FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    CONSTRAINT fk_lote_ventas FOREIGN KEY (id_lote) REFERENCES propiedades(id_lote)
+);
+
+🔸 calendario_pagos
+CREATE TABLE calendario_pagos (
+    id_calendario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_lote INT UNSIGNED NOT NULL,
+    numero_pago TINYINT UNSIGNED NOT NULL,
+    fecha_vencimiento DATE NOT NULL,
+    monto_programado DECIMAL(10,2) NOT NULL,
+    monto_restante DECIMAL(10,2) NOT NULL,
+    categoria_pago ENUM('Enganche', 'Contado', 'Mensualidad', 'Anualidad') NOT NULL,
+    estatus_pago ENUM('Pendiente', 'Pagado', 'Vencido') DEFAULT 'Pendiente',
+    CONSTRAINT fk_lote_calendario FOREIGN KEY (id_lote) REFERENCES propiedades(id_lote)
+);
+
+🔸 pagos_realizados
+CREATE TABLE pagos_realizados (
+    id_pago INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_lote INT UNSIGNED NOT NULL,
+    fecha_pago DATE NOT NULL,
+    monto_pagado DECIMAL(10,2) NOT NULL,
+    categoria_pago ENUM('Enganche', 'Contado', 'Mensualidad', 'Anualidad') NOT NULL,
+    metodo_pago ENUM('Deposito', 'Efectivo', 'Transferencia') NOT NULL,
+    referencia_pago VARCHAR(50),
+    observaciones TEXT,
+    CONSTRAINT fk_lote_pagos FOREIGN KEY (id_lote) REFERENCES propiedades(id_lote)
+);
+
+🔸 pagos_mensualidades_relacion
+CREATE TABLE pagos_mensualidades_relacion (
+    id_relacion INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_pago INT UNSIGNED NOT NULL,
+    id_calendario INT UNSIGNED NOT NULL,
+    monto_asignado DECIMAL(10,2) NOT NULL,
+    CONSTRAINT fk_pago_relacion FOREIGN KEY (id_pago) REFERENCES pagos_realizados(id_pago),
+    CONSTRAINT fk_calendario_relacion FOREIGN KEY (id_calendario) REFERENCES calendario_pagos(id_calendario)
+);
+
+🔸 historial_comisiones
+CREATE TABLE historial_comisiones (
+    id_comision INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_pago INT UNSIGNED NOT NULL,
+    id_lote INT UNSIGNED NOT NULL,
+    porcentaje_comision DECIMAL(5,2) NOT NULL,
+    monto_comision DECIMAL(10,2) NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pago_comision FOREIGN KEY (id_pago) REFERENCES pagos_realizados(id_pago),
+    CONSTRAINT fk_lote_comision FOREIGN KEY (id_lote) REFERENCES propiedades(id_lote)
+);
+
+🔸 referencia_pagos_anteriores
+CREATE TABLE referencia_pagos_anteriores (
+    id_referencia INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    id_lote INT UNSIGNED NOT NULL,
+    id_pago_anterior INT UNSIGNED NOT NULL,
+    observaciones TEXT,
+    CONSTRAINT fk_lote_referencia FOREIGN KEY (id_lote) REFERENCES propiedades(id_lote)
+);
+
+2️⃣ PROCEDIMIENTOS ALMACENADOS
+
+🔸 insertar_cliente
+- Inserta un nuevo cliente con validación de CURP, RFC, INE y correo únicos.
+- Normaliza datos: nombres y apellidos en mayúsculas, correo en minúsculas.
+
+🔸 registrar_venta_y_generar_calendario
+- Registra la venta del lote a un cliente.
+- Actualiza el estado del lote a "Vendido".
+- Genera el calendario de pagos según la forma de pago: Enganche + Contado o Enganche + Financiamiento.
+
+🔸 registrar_pago
+- Registra el pago realizado por un cliente.
+- Aplica el pago a las mensualidades pendientes en el calendario de pagos.
+- Registra la relación en pagos_mensualidades_relacion.
+- Calcula y registra la comisión en historial_comisiones.
+
+🔸 reporte_cobranza_mensual
+- Consulta la cobranza mensual programada vs. la recibida.
+- Devuelve el estado de la cobranza por mes.
+
+🔸 procedimientos de consulta de clientes y lotes disponibles
+- Devuelven listas JSON para autocompletado en formularios.
+
+3️⃣ CONSIDERACIONES DE FUNCIONAMIENTO
+- Pagos adelantados se aplican automáticamente a mensualidades futuras.
+- Fechas de pago deben estar en el rango del 1 al 30. Febrero se ajusta a 28 siempre.
+- Comisiones se calculan por cada pago registrado, independiente del saldo de la venta.
+- Ventas únicas por lote. Sin posibilidad de reventa actualmente.
+
