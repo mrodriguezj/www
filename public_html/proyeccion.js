@@ -1,33 +1,24 @@
-let paginaActual = 1;
-const registrosPorPagina = 10;
-let ultimaRespuesta = []; // Guarda la última respuesta para manejar los detalles sin recargar
+let offsetActual = 0;
+const registrosPorCarga = 20;
+let cargando = false;
+let datosCargados = [];
 
 async function consultarProyeccion() {
-  const fecha_inicio = document.getElementById('fecha_inicio').value;
-  const fecha_fin = document.getElementById('fecha_fin').value;
-  const fecha_consulta = document.getElementById('fecha_consulta').value;
+  offsetActual = 0;
+  datosCargados = [];
 
-  const estado_pago = document.getElementById('filtro_estado')?.value || '';
-  const cliente_nombre = document.getElementById('filtro_cliente')?.value || '';
+  await cargarTotalesProyeccion();
+  await cargarPagosScroll(true); // primera carga
+}
 
-  if (!fecha_inicio || !fecha_fin) {
-    alert('Debes ingresar las fechas de inicio y fin.');
-    return;
-  }
+async function cargarTotalesProyeccion() {
+  const filtros = obtenerFiltros();
 
   try {
-    const response = await fetch('http://localhost/api/index.php?endpoint=proyeccion_pagos', {
+    const response = await fetch('http://localhost/api/index.php?endpoint=proyeccion_pagos_totales', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fecha_inicio,
-        fecha_fin,
-        fecha_consulta,
-        estado_pago,
-        cliente_nombre,
-        pagina: paginaActual,
-        registros_por_pagina: registrosPorPagina
-      })
+      body: JSON.stringify(filtros)
     });
 
     const data = await response.json();
@@ -37,79 +28,103 @@ async function consultarProyeccion() {
       return;
     }
 
-    ultimaRespuesta = data.resultados;
-
-    mostrarResumen(ultimaRespuesta);
-    llenarTablaPagos(ultimaRespuesta);
-    actualizarControlesPaginacion();
+    mostrarTotales(data.resumen);
 
   } catch (error) {
-    console.error('Error al consultar la proyección:', error);
+    console.error('Error al cargar totales:', error);
   }
 }
 
-function mostrarResumen(pagos) {
-  let proyectado = 0, cobrado = 0, pendiente = 0, vencido = 0;
+async function cargarPagosScroll(primeraCarga = false) {
+  if (cargando) return;
+  cargando = true;
 
-  pagos.forEach(p => {
-    proyectado += parseFloat(p.monto_programado);
+  const filtros = obtenerFiltros();
+  filtros.limit = registrosPorCarga;
+  filtros.offset = offsetActual;
 
-    if (p.estatus_pago === 'Pagado') {
-      cobrado += parseFloat(p.monto_programado);
-    } else if (p.estatus_pago === 'Pendiente') {
-      pendiente += parseFloat(p.monto_restante);
-    } else if (p.estatus_pago === 'Vencido') {
-      vencido += parseFloat(p.monto_restante);
+  try {
+    const response = await fetch('http://localhost/api/index.php?endpoint=proyeccion_pagos_detalles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(filtros)
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      alert(data.error);
+      cargando = false;
+      return;
     }
-  });
 
-  document.getElementById('monto_proyectado').innerText = `$${proyectado.toFixed(2)}`;
-  document.getElementById('monto_cobrado').innerText = `$${cobrado.toFixed(2)}`;
-  document.getElementById('monto_pendiente').innerText = `$${pendiente.toFixed(2)}`;
-  document.getElementById('monto_vencido').innerText = `$${vencido.toFixed(2)}`;
+    datosCargados = [...datosCargados, ...data.resultados];
+    renderizarPagos(data.resultados, primeraCarga);
+
+    offsetActual += registrosPorCarga;
+    cargando = false;
+
+  } catch (error) {
+    console.error('Error al cargar pagos:', error);
+    cargando = false;
+  }
 }
 
-function llenarTablaPagos(pagos) {
-  const cuerpoTabla = document.getElementById('tabla_pagos');
-  cuerpoTabla.innerHTML = '';
+function obtenerFiltros() {
+  return {
+    fecha_inicio: document.getElementById('fecha_inicio').value,
+    fecha_fin: document.getElementById('fecha_fin').value,
+    fecha_consulta: document.getElementById('fecha_consulta').value,
+    estado_pago: document.getElementById('filtro_estado').value,
+    cliente_nombre: document.getElementById('filtro_cliente').value
+  };
+}
+
+function mostrarTotales(totales) {
+  document.getElementById('monto_proyectado').innerText = `$${parseFloat(totales.total_programado || 0).toFixed(2)}`;
+  document.getElementById('monto_cobrado').innerText = `$${parseFloat(totales.total_cobrado || 0).toFixed(2)}`;
+  document.getElementById('monto_pendiente').innerText = `$${parseFloat(totales.total_pendiente || 0).toFixed(2)}`;
+  document.getElementById('monto_vencido').innerText = `$${parseFloat(totales.total_vencido || 0).toFixed(2)}`;
+}
+
+function renderizarPagos(pagos, primeraCarga = false) {
+  const contenedor = document.getElementById('contenedor_pagos');
+
+  if (primeraCarga) {
+    contenedor.innerHTML = '';
+  }
 
   if (!pagos || pagos.length === 0) {
-    cuerpoTabla.innerHTML = `<tr><td colspan="7" class="text-center py-4">No se encontraron registros</td></tr>`;
+    if (primeraCarga) {
+      contenedor.innerHTML = `<p class="text-center py-4 text-gray-500">No se encontraron registros.</p>`;
+    }
     return;
   }
 
   pagos.forEach(p => {
-    const row = `
-      <tr class="border-b hover:bg-gray-50">
-        <td class="px-4 py-2">${p.cliente_nombre}</td>
-        <td class="px-4 py-2">ID: ${p.id_lote}</td>
-        <td class="px-4 py-2">${p.fecha_vencimiento}</td>
-        <td class="px-4 py-2">$${parseFloat(p.monto_programado).toFixed(2)}</td>
-        <td class="px-4 py-2">${p.estatus_pago}</td>
-        <td class="px-4 py-2">${p.dias_atraso}</td>
-        <td class="px-4 py-2">
-          <button onclick="verDetallePago(${p.id_calendario})" class="text-blue-600 hover:underline">Ver Detalle</button>
-        </td>
-      </tr>
+    const div = document.createElement('div');
+    div.classList = 'border-b py-2 flex justify-between items-center hover:bg-gray-50 cursor-pointer';
+    div.innerHTML = `
+      <div>
+        <p><strong>${p.cliente_nombre}</strong> - Lote ID: ${p.id_lote}</p>
+        <p class="text-sm text-gray-500">Vence: ${p.fecha_vencimiento} | Estado: ${p.estatus_pago} | Días atraso: ${p.dias_atraso}</p>
+      </div>
+      <div class="font-bold">$${parseFloat(p.monto_programado).toFixed(2)}</div>
     `;
-    cuerpoTabla.innerHTML += row;
+    div.onclick = () => verDetallePago(p.id_calendario);
+
+    contenedor.appendChild(div);
   });
 }
 
-function siguientePagina() {
-  paginaActual++;
-  consultarProyeccion();
-}
+function inicializarScrollInfinito() {
+  const contenedor = document.getElementById('contenedor_pagos');
 
-function paginaAnterior() {
-  if (paginaActual > 1) {
-    paginaActual--;
-    consultarProyeccion();
-  }
-}
-
-function actualizarControlesPaginacion() {
-  document.getElementById('pagina_actual').innerText = `Página ${paginaActual}`;
+  contenedor.addEventListener('scroll', () => {
+    if (contenedor.scrollTop + contenedor.clientHeight >= contenedor.scrollHeight - 50) {
+      cargarPagosScroll(false);
+    }
+  });
 }
 
 async function verDetallePago(id_calendario) {
@@ -136,7 +151,6 @@ async function verDetallePago(id_calendario) {
 
 function mostrarModalDetalle(data) {
   const contenedor = document.getElementById('modal_contenido');
-
   const pago = data.pago && data.pago[0];
   const relaciones = data.relaciones || [];
 
@@ -176,4 +190,61 @@ function abrirModal() {
 
 function cerrarModal() {
   document.getElementById('modal').classList.add('hidden');
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  inicializarScrollInfinito();
+});
+
+
+function exportarPagosCSV() {
+  if (!datosCargados || datosCargados.length === 0) {
+    alert('No hay datos para exportar.');
+    return;
+  }
+
+  // Cabeceras para el CSV
+  const headers = [
+    'ID Calendario',
+    'ID Lote',
+    'Cliente',
+    'Descripción Lote',
+    'Fecha Vencimiento',
+    'Monto Programado',
+    'Monto Restante',
+    'Categoría Pago',
+    'Estatus Pago',
+    'Días Atraso'
+  ];
+
+  // Cuerpo de datos
+  const rows = datosCargados.map(p => [
+    p.id_calendario,
+    p.id_lote,
+    p.cliente_nombre,
+    p.descripcion_lote,
+    p.fecha_vencimiento,
+    parseFloat(p.monto_programado).toFixed(2),
+    parseFloat(p.monto_restante).toFixed(2),
+    p.categoria_pago,
+    p.estatus_pago,
+    p.dias_atraso
+  ]);
+
+  // Generar el contenido del CSV
+  let csvContent = "data:text/csv;charset=utf-8," 
+    + headers.join(",") + "\n"
+    + rows.map(e => e.join(",")).join("\n");
+
+  // Crear y disparar la descarga
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement("a");
+  link.setAttribute("href", encodedUri);
+
+  const fechaExportacion = new Date().toISOString().slice(0, 10);
+  link.setAttribute("download", `proyeccion_pagos_${fechaExportacion}.csv`);
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
