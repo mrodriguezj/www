@@ -58,6 +58,7 @@ CREATE TABLE pagos_mensualidades_relacion (
     CONSTRAINT fk_calendario_relacion FOREIGN KEY (id_calendario) REFERENCES calendario_pagos(id_calendario)
 );
 
+
 DELIMITER $$
 
 CREATE PROCEDURE registrar_pago (
@@ -84,104 +85,82 @@ BEGIN
         ROLLBACK;
     END;
 
-    -- Inicia la transacción para garantizar integridad de datos
+    -- Inicia la transacción
     START TRANSACTION;
 
-    -- 1️⃣ Registrar el pago en la tabla pagos_realizados
+    -- 1️⃣ Registrar el pago en pagos_realizados
     INSERT INTO pagos_realizados (
-        id_lote,
-        fecha_pago,
-        monto_pagado,
-        categoria_pago,
-        metodo_pago,
-        referencia_pago,
-        estatus_pago,
-        observaciones
+        id_lote, fecha_pago, monto_pagado, categoria_pago, 
+        metodo_pago, referencia_pago, estatus_pago, observaciones
     ) VALUES (
-        p_id_lote,
-        p_fecha_pago,
-        p_monto_pagado,
-        p_categoria_pago,
-        p_metodo_pago,
-        p_referencia_pago,
-        'Procesado', -- Valor por defecto al registrar un pago
-        p_observaciones
+        p_id_lote, p_fecha_pago, p_monto_pagado, p_categoria_pago, 
+        p_metodo_pago, p_referencia_pago, 'Procesado', p_observaciones
     );
 
-    -- Guarda el ID del pago insertado para usarlo en otras tablas
+    -- Obtener el ID del pago insertado
     SET v_id_pago = LAST_INSERT_ID();
-
-    -- 2️⃣ Aplica el monto pagado a los registros pendientes en calendario_pagos
     SET v_pago_restante = p_monto_pagado;
 
+    -- 2️⃣ Buscar el primer calendario pendiente y pagarlo completamente antes de avanzar
     WHILE v_pago_restante > 0 DO
 
-        -- Busca el siguiente calendario pendiente por pagar
+        -- 🔥 FIX: Aseguramos que el pago se asigna al `id_calendario` más antiguo con la misma fecha
         SELECT id_calendario, monto_restante
         INTO v_id_calendario, v_monto_restante
         FROM calendario_pagos
-        WHERE id_lote = p_id_lote
-            AND estatus_pago = 'Pendiente'
-        ORDER BY fecha_vencimiento ASC
+        WHERE id_lote = p_id_lote AND estatus_pago = 'Pendiente'
+        ORDER BY fecha_vencimiento ASC, id_calendario ASC
         LIMIT 1;
 
-        -- Si no hay registros pendientes (el SELECT no devolvió nada)
+        -- Si no hay más registros pendientes, salir del ciclo
         IF v_id_calendario IS NULL THEN
-            SET v_pago_restante = 0; -- Sale del ciclo
+            SET v_pago_restante = 0;
         ELSE
-            -- Si el pago cubre totalmente el monto pendiente
-            IF v_pago_restante >= v_monto_restante THEN
+            -- Mantener el mismo calendario hasta pagarlo completamente
+            WHILE v_pago_restante > 0 AND v_monto_restante > 0 DO
 
-                SET v_monto_aplicado = v_monto_restante;
+                IF v_pago_restante >= v_monto_restante THEN
+                    -- Se paga completamente el calendario actual
+                    SET v_monto_aplicado = v_monto_restante;
 
-                -- Marcar como pagado en calendario_pagos
-                UPDATE calendario_pagos
-                SET monto_restante = 0,
-                    estatus_pago = 'Pagado'
-                WHERE id_calendario = v_id_calendario;
+                    UPDATE calendario_pagos
+                    SET monto_restante = 0, estatus_pago = 'Pagado'
+                    WHERE id_calendario = v_id_calendario;
 
-            ELSE
-                -- Solo cubre una parte del pago pendiente
-                SET v_monto_aplicado = v_pago_restante;
+                    -- Registrar la relación de pago
+                    INSERT INTO pagos_mensualidades_relacion (id_pago, id_calendario, monto_asignado)
+                    VALUES (v_id_pago, v_id_calendario, v_monto_aplicado);
 
-                -- Actualiza el monto restante
-                UPDATE calendario_pagos
-                SET monto_restante = monto_restante - v_monto_aplicado
-                WHERE id_calendario = v_id_calendario;
+                    -- Restar el monto aplicado
+                    SET v_pago_restante = v_pago_restante - v_monto_aplicado;
+                    SET v_monto_restante = 0; -- Se marca como completamente pagado
 
-            END IF;
+                ELSE
+                    -- Pago parcial al calendario
+                    SET v_monto_aplicado = v_pago_restante;
 
-            -- Registra la relación del pago con el calendario afectado
-            INSERT INTO pagos_mensualidades_relacion (
-                id_pago,
-                id_calendario,
-                monto_asignado
-            ) VALUES (
-                v_id_pago,
-                v_id_calendario,
-                v_monto_aplicado
-            );
+                    UPDATE calendario_pagos
+                    SET monto_restante = monto_restante - v_monto_aplicado
+                    WHERE id_calendario = v_id_calendario;
 
-            -- Descuenta el monto aplicado del restante del pago
-            SET v_pago_restante = v_pago_restante - v_monto_aplicado;
+                    -- Registrar la relación de pago
+                    INSERT INTO pagos_mensualidades_relacion (id_pago, id_calendario, monto_asignado)
+                    VALUES (v_id_pago, v_id_calendario, v_monto_aplicado);
+
+                    -- Agotar el pago actual
+                    SET v_pago_restante = 0;
+                    SET v_monto_restante = v_monto_restante - v_monto_aplicado;
+                END IF;
+
+            END WHILE;
 
         END IF;
 
     END WHILE;
 
-    -- 3️⃣ Registrar la comisión generada de este pago en historial_comisiones
-    INSERT INTO historial_comisiones (
-        id_pago,
-        id_lote,
-        porcentaje_comision,
-        monto_comision
-        -- estatus_pago_comision y fecha_pago_comision usan valores por defecto
-    ) VALUES (
-        v_id_pago,
-        p_id_lote,
-        p_porcentaje_comision,
-        ROUND(p_monto_pagado * (p_porcentaje_comision / 100), 2)
-    );
+    -- 3️⃣ Registrar la comisión generada por el pago
+    INSERT INTO historial_comisiones (id_pago, id_lote, porcentaje_comision, monto_comision)
+    VALUES (v_id_pago, p_id_lote, p_porcentaje_comision, ROUND(p_monto_pagado * (p_porcentaje_comision / 100), 2));
 
     -- 4️⃣ Confirmar la transacción
     COMMIT;
