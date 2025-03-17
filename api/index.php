@@ -49,6 +49,18 @@ switch ($request) {
         require 'endpoints/proyeccion_pagos_detalles.php';
         break;
 
+    case 'totalPagado':
+        require 'endpoints/totalPagado.php';
+        break;
+
+    case 'carteraVencida':
+        require 'endpoints/carteraVencida.php';
+        break;
+
+    case 'morosos':
+        require 'endpoints/morosos.php';
+        break;
+
     default:
         echo json_encode(["error" => "Endpoint no válido"]);
         break;
