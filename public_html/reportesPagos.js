@@ -57,7 +57,7 @@ function calcularRecuperacion() {
 }
 
 function renderTablaMorosos(morosos) {
-  const tbody = document.querySelector("#tablaMorosos tbody");
+  const tbody = document.getElementById("tablaMorososBody");
   tbody.innerHTML = "";
 
   morosos.forEach(m => {
