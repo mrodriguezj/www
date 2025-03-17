@@ -1,1 +1,3 @@
 api/config/.env
+api/endpoints/enganchesCSV.csv
+api/endpoints/mensualidadesCSV.csv
