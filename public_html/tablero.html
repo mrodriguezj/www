@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard Cobranza y Ventas</title>
+
+  <!-- TailwindCSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Font Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F3F4F6;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gray-100">
+
+  <!-- Encabezado -->
+  <header class="bg-white shadow py-4 px-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-blue-700">Dashboard de Cobranza y Ventas</h1>
+    <button id="btnAbrirFiltro" class="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">
+      Filtrar 🔎
+    </button>
+  </header>
+
+  <!-- Modal de Filtros -->
+  <div id="modalFiltro" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+      <h2 class="text-lg font-bold mb-4 text-gray-700">Selecciona el Periodo</h2>
+      <div class="flex flex-col gap-4">
+        <div>
+          <label for="mes" class="block text-sm font-medium text-gray-700">Mes</label>
+          <select id="mes" class="w-full p-2 mt-1 border rounded-lg">
+            <option value="1">Enero</option>
+            <option value="2">Febrero</option>
+            <option value="3">Marzo</option>
+            <!-- Agrega el resto -->
+          </select>
+        </div>
+        <div>
+          <label for="anio" class="block text-sm font-medium text-gray-700">Año</label>
+          <select id="anio" class="w-full p-2 mt-1 border rounded-lg">
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button id="btnCerrarFiltro" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">Cancelar</button>
+        <button id="btnAplicarFiltros" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Aplicar Filtros</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <main class="max-w-7xl mx-auto px-4 mt-6">
+
+    <!-- Sección 1: Resumen Histórico General -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">Total Cobrado Históricamente</h3>
+        <p id="totalCobradoHistorico" class="text-3xl font-bold text-blue-600">$--</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">Cartera Vencida Acumulada</h3>
+        <p id="carteraVencidaHistorico" class="text-3xl font-bold text-red-600">$--</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">% Recuperación Histórico</h3>
+        <p id="porcentajeRecuperacionHistorico" class="text-3xl font-bold text-green-600">--%</p>
+      </div>
+    </section>
+
+    <!-- Sección 2: Proyección del Periodo -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">Proyección de Cobro del Periodo</h3>
+        <p id="proyeccionCobroPeriodo" class="text-3xl font-bold text-blue-600">$--</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">Cartera Vencida del Periodo</h3>
+        <p id="carteraVencidaPeriodo" class="text-3xl font-bold text-red-600">$--</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">% Recuperación del Periodo</h3>
+        <p id="porcentajeRecuperacionPeriodo" class="text-3xl font-bold text-green-600">--%</p>
+      </div>
+    </section>
+
+    <!-- Sección 3: Estado de Propiedades -->
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">Propiedades Vendidas</h3>
+        <p id="propiedadesVendidas" class="text-3xl font-bold text-blue-600">--</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">Propiedades Disponibles</h3>
+        <p id="propiedadesDisponibles" class="text-3xl font-bold text-green-600">--</p>
+      </div>
+      <div class="bg-white rounded-2xl shadow-md p-6 border">
+        <h3 class="text-gray-500 text-sm font-medium mb-2">Propiedades Reservadas</h3>
+        <p id="propiedadesReservadas" class="text-3xl font-bold text-yellow-500">--</p>
+      </div>
+    </section>
+
+    <!-- Sección 4: Detalle de Pagos Vencidos -->
+    <section class="bg-white rounded-2xl shadow-md p-6 mb-12">
+      <h2 class="text-lg font-semibold mb-4 text-gray-700">Detalle de Pagos Vencidos</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left text-gray-700">
+          <thead class="text-xs uppercase bg-gray-50 text-gray-500">
+            <tr>
+              <th class="px-4 py-3">Cliente</th>
+              <th class="px-4 py-3">Propiedad</th>
+              <th class="px-4 py-3">Núm. Pago</th>
+              <th class="px-4 py-3">Vencimiento</th>
+              <th class="px-4 py-3">Monto Restante</th>
+              <th class="px-4 py-3">Días Mora</th>
+              <th class="px-4 py-3">Estatus</th>
+            </tr>
+          </thead>
+          <tbody id="tablaPagosVencidosBody" class="divide-y divide-gray-200">
+            <!-- Se llena dinámicamente desde JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script básico para el modal -->
+  <script>
+    const btnAbrirFiltro = document.getElementById('btnAbrirFiltro');
+    const btnCerrarFiltro = document.getElementById('btnCerrarFiltro');
+    const modalFiltro = document.getElementById('modalFiltro');
+
+    btnAbrirFiltro.addEventListener('click', () => {
+      modalFiltro.classList.remove('hidden');
+      modalFiltro.classList.add('flex');
+    });
+
+    btnCerrarFiltro.addEventListener('click', () => {
+      modalFiltro.classList.add('hidden');
+      modalFiltro.classList.remove('flex');
+    });
+
+    // Acción al aplicar filtros
+    document.getElementById('btnAplicarFiltros').addEventListener('click', () => {
+      // Aquí va la lógica para enviar filtros al backend
+      modalFiltro.classList.add('hidden');
+      modalFiltro.classList.remove('flex');
+
+      // Ejemplo: console.log("Aplicando filtros de mes:", mes.value, "año:", anio.value);
+    });
+  </script>
+
+</body>
+</html>
