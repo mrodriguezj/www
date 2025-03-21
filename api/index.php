@@ -78,6 +78,10 @@ switch ($request) {
     case 'pagos_vencidos':
         require 'endpoints/tablero/pagos_vencidos.php';
         break;
+    
+    case 'detalles_propiedades':
+        require 'endpoints/tablero/detalles_propiedades.php';
+        break;
 
     default:
         echo json_encode(["error" => "Endpoint no válido"]);
