@@ -61,6 +61,24 @@ switch ($request) {
         require 'endpoints/morosos.php';
         break;
 
+        //Tablero gerencial
+
+    case 'resumen_historico':
+        require 'endpoints/tablero/resumen_historico.php';
+        break;
+
+    case 'proyeccion_periodo':
+        require 'endpoints/tablero/proyeccion_periodo.php';
+        break;
+
+    case 'estado_propiedades':
+        require 'endpoints/tablero/estado_propiedades.php';
+        break;
+
+    case 'pagos_vencidos':
+        require 'endpoints/tablero/pagos_vencidos.php';
+        break;
+
     default:
         echo json_encode(["error" => "Endpoint no válido"]);
         break;
