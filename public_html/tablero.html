@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard Cobranza y Ventas</title>
 
   <!-- TailwindCSS -->
@@ -24,9 +25,8 @@
   <!-- Encabezado -->
   <header class="bg-white shadow py-4 px-6 flex justify-between items-center">
     <h1 class="text-2xl font-bold text-blue-700">Dashboard de Cobranza y Ventas</h1>
-    <button id="btnAbrirFiltro" class="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">
-      Filtrar 🔎
-    </button>
+    <button id="btnAbrirFiltro"
+      class="px-4 py-2 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700">Filtrar 🔎</button>
   </header>
 
   <!-- Modal de Filtros -->
@@ -52,8 +52,10 @@
         </div>
       </div>
       <div class="flex justify-end gap-2 mt-6">
-        <button id="btnCerrarFiltro" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">Cancelar</button>
-        <button id="btnAplicarFiltros" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Aplicar Filtros</button>
+        <button id="btnCerrarFiltro"
+          class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500">Cancelar</button>
+        <button id="btnAplicarFiltros"
+          class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Aplicar Filtros</button>
       </div>
     </div>
   </div>
@@ -63,50 +65,60 @@
 
     <!-- Sección 1: Resumen Histórico General -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+      <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
         <h3 class="text-gray-500 text-sm font-medium mb-2">Total Cobrado Históricamente</h3>
-        <p id="totalCobradoHistorico" class="text-3xl font-bold text-blue-600">$--</p>
+        <p id="totalCobradoHistorico" class="text-4xl font-bold text-blue-600">$--</p>
       </div>
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+      <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
         <h3 class="text-gray-500 text-sm font-medium mb-2">Cartera Vencida Acumulada</h3>
-        <p id="carteraVencidaHistorico" class="text-3xl font-bold text-red-600">$--</p>
+        <p id="carteraVencidaHistorico" class="text-4xl font-bold text-red-600">$--</p>
       </div>
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+      <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
         <h3 class="text-gray-500 text-sm font-medium mb-2">% Recuperación Histórico</h3>
-        <p id="porcentajeRecuperacionHistorico" class="text-3xl font-bold text-green-600">--%</p>
+        <p id="porcentajeRecuperacionHistorico" class="text-4xl font-bold text-green-600">--%</p>
       </div>
     </section>
 
     <!-- Sección 2: Proyección del Periodo -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+      <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
         <h3 class="text-gray-500 text-sm font-medium mb-2">Proyección de Cobro del Periodo</h3>
-        <p id="proyeccionCobroPeriodo" class="text-3xl font-bold text-blue-600">$--</p>
+        <p id="proyeccionCobroPeriodo" class="text-4xl font-bold text-blue-600">$--</p>
       </div>
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+      <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
         <h3 class="text-gray-500 text-sm font-medium mb-2">Cartera Vencida del Periodo</h3>
-        <p id="carteraVencidaPeriodo" class="text-3xl font-bold text-red-600">$--</p>
+        <p id="carteraVencidaPeriodo" class="text-4xl font-bold text-red-600">$--</p>
       </div>
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+      <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-200">
         <h3 class="text-gray-500 text-sm font-medium mb-2">% Recuperación del Periodo</h3>
-        <p id="porcentajeRecuperacionPeriodo" class="text-3xl font-bold text-green-600">--%</p>
+        <p id="porcentajeRecuperacionPeriodo" class="text-4xl font-bold text-green-600">--%</p>
       </div>
     </section>
 
     <!-- Sección 3: Estado de Propiedades -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+
+      <!-- Propiedades Vendidas -->
+      <div id="propiedadesVendidas"
+        class="bg-white rounded-2xl shadow-md p-6 border border-gray-200 cursor-pointer hover:shadow-lg transition duration-300 ease-in-out">
         <h3 class="text-gray-500 text-sm font-medium mb-2">Propiedades Vendidas</h3>
-        <p id="propiedadesVendidas" class="text-3xl font-bold text-blue-600">--</p>
+        <p id="valorPropiedadesVendidas" class="text-4xl font-bold text-blue-600">--</p>
       </div>
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+
+      <!-- Propiedades Disponibles -->
+      <div id="propiedadesDisponibles"
+        class="bg-white rounded-2xl shadow-md p-6 border border-gray-200 cursor-pointer hover:shadow-lg transition duration-300 ease-in-out">
         <h3 class="text-gray-500 text-sm font-medium mb-2">Propiedades Disponibles</h3>
-        <p id="propiedadesDisponibles" class="text-3xl font-bold text-green-600">--</p>
+        <p id="valorPropiedadesDisponibles" class="text-4xl font-bold text-green-600">--</p>
       </div>
-      <div class="bg-white rounded-2xl shadow-md p-6 border">
+
+      <!-- Propiedades Reservadas -->
+      <div id="propiedadesReservadas"
+        class="bg-white rounded-2xl shadow-md p-6 border border-gray-200 cursor-pointer hover:shadow-lg transition duration-300 ease-in-out">
         <h3 class="text-gray-500 text-sm font-medium mb-2">Propiedades Reservadas</h3>
-        <p id="propiedadesReservadas" class="text-3xl font-bold text-yellow-500">--</p>
+        <p id="valorPropiedadesReservadas" class="text-4xl font-bold text-yellow-500">--</p>
       </div>
+
     </section>
 
     <!-- Sección 4: Detalle de Pagos Vencidos -->
@@ -134,33 +146,46 @@
 
   </main>
 
-  <!-- Script básico para el modal -->
-  <script>
-    const btnAbrirFiltro = document.getElementById('btnAbrirFiltro');
-    const btnCerrarFiltro = document.getElementById('btnCerrarFiltro');
-    const modalFiltro = document.getElementById('modalFiltro');
+  <!-- Overlay oscuro para el off-canvas -->
+  <div id="offCanvasOverlay" class="fixed inset-0 z-40 bg-black bg-opacity-30 hidden"></div>
 
-    btnAbrirFiltro.addEventListener('click', () => {
-      modalFiltro.classList.remove('hidden');
-      modalFiltro.classList.add('flex');
-    });
+  <!-- Off-canvas Detalles de Propiedades -->
+  <div id="offCanvasDetalles"
+    class="fixed inset-y-0 right-0 z-50 w-full sm:w-1/3 bg-white shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
 
-    btnCerrarFiltro.addEventListener('click', () => {
-      modalFiltro.classList.add('hidden');
-      modalFiltro.classList.remove('flex');
-    });
+    <!-- Header del panel -->
+    <div class="flex justify-between items-center p-4 border-b">
+      <h2 id="tituloOffCanvas" class="text-lg font-bold text-gray-700">Detalles de Propiedades</h2>
+      <button id="cerrarOffCanvas"
+        class="text-red-600 text-xl font-bold focus:outline-none hover:text-red-800">✕</button>
+    </div>
 
-    // Acción al aplicar filtros
-    document.getElementById('btnAplicarFiltros').addEventListener('click', () => {
-      // Aquí va la lógica para enviar filtros al backend
-      modalFiltro.classList.add('hidden');
-      modalFiltro.classList.remove('flex');
+    <!-- Contenido principal -->
+    <div class="flex-1 overflow-y-auto p-4">
+      <table class="min-w-full text-sm text-left text-gray-700">
+        <thead class="text-xs uppercase bg-gray-50 text-gray-500">
+          <tr>
+            <th class="px-4 py-3">Lote</th>
+            <th class="px-4 py-3">Fecha Venta</th>
+            <th class="px-4 py-3">Cliente</th>
+          </tr>
+        </thead>
+        <tbody id="tablaDetallesOffCanvas" class="divide-y divide-gray-200">
+          <!-- Se llena dinámicamente desde JS -->
+        </tbody>
+      </table>
+    </div>
 
-      // Ejemplo: console.log("Aplicando filtros de mes:", mes.value, "año:", anio.value);
-    });
-  </script>
+    <!-- Footer del panel -->
+    <div class="p-4 border-t text-right">
+      <button id="cerrarOffCanvasFooter"
+        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Cerrar</button>
+    </div>
 
-    <script src="tablero.js"></script>
+  </div>
 
+  <!-- Script de la lógica -->
+  <script src="tablero.js"></script>
 </body>
+
 </html>
