@@ -5,7 +5,6 @@
   <title>Confirmación de Pago</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* General Reset */
     body, table, td, p, a {
       -webkit-text-size-adjust: 100%;
       -ms-text-size-adjust: 100%;
@@ -26,7 +25,6 @@
       text-decoration: none;
       max-width: 100%;
     }
-    /* Mobile Styles */
     @media screen and (max-width: 600px) {
       h1 {
         font-size: 24px !important;
@@ -55,7 +53,8 @@
         </table>
       </td>
     </tr>
-    <!-- Contenido -->
+
+    <!-- Encabezado -->
     <tr>
       <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
         <table border="0" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;">
@@ -67,6 +66,7 @@
         </table>
       </td>
     </tr>
+
     <!-- Cuerpo -->
     <tr>
       <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 0px 10px;">
@@ -74,12 +74,20 @@
           <tr>
             <td bgcolor="#ffffff" align="left" style="padding: 30px; font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; color: #333333;">
               <h1 style="font-size: 24px; margin-bottom: 20px;">¡Pago Confirmado!</h1>
+              
               <p>Estimado/a <strong>[Nombre del Cliente]</strong>,</p>
+              
               <p>Hemos recibido correctamente su pago por la cantidad de <strong>$[Cantidad Pagada]</strong>.</p>
+              
               <p>A continuación, te compartimos los detalles de tu transacción:</p>
+              
               <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 20px;">
                 <tr>
-                  <td width="50%" style="padding: 5px 0;"><strong>Fecha:</strong></td>
+                  <td width="50%" style="padding: 5px 0;"><strong>Categoría de Pago:</strong></td>
+                  <td width="50%" style="padding: 5px 0;">[Categoría de Pago]</td>
+                </tr>
+                <tr>
+                  <td width="50%" style="padding: 5px 0;"><strong>Fecha del Pago:</strong></td>
                   <td width="50%" style="padding: 5px 0;">[Fecha del Pago]</td>
                 </tr>
                 <tr>
@@ -87,16 +95,26 @@
                   <td width="50%" style="padding: 5px 0;">[Método de Pago]</td>
                 </tr>
                 <tr>
-                  <td width="50%" style="padding: 5px 0;"><strong>Referencia:</strong></td>
+                  <td width="50%" style="padding: 5px 0;"><strong>Referencia de Pago:</strong></td>
                   <td width="50%" style="padding: 5px 0;">[Número de Referencia]</td>
                 </tr>
+                <tr>
+                  <td width="50%" style="padding: 5px 0;"><strong>Estatus del Pago:</strong></td>
+                  <td width="50%" style="padding: 5px 0;">[Estatus Pago]</td>
+                </tr>
+                <tr>
+                  <td width="50%" style="padding: 5px 0;"><strong>Monto Restante:</strong></td>
+                  <td width="50%" style="padding: 5px 0;">$ [Monto Restante]</td>
+                </tr>
               </table>
+
               <p style="margin-top: 20px;">Gracias por tu confianza. Este correo confirma la recepción de tu pago y el inicio del proceso correspondiente.</p>
             </td>
           </tr>
         </table>
       </td>
     </tr>
+
     <!-- Footer -->
     <tr>
       <td bgcolor="#f4f4f4" align="center" style="padding: 0px 10px 40px 10px;">
@@ -104,8 +122,7 @@
           <tr>
             <td bgcolor="#eeeeee" align="center" style="padding: 20px; font-family: Arial, sans-serif; font-size: 14px; color: #555555; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
               ¿Tienes dudas o necesitas aclaraciones?<br>
-              Contáctanos por WhatsApp:
-              <br><br>
+              Contáctanos por WhatsApp:<br><br>
               <a href="https://wa.me/529984750985" target="_blank" style="background-color: #25D366; color: #ffffff; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Enviar Mensaje</a>
               <br><br>
               © 2025 Bonaterra. Todos los derechos reservados.
