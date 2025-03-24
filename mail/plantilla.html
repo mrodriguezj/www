@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmación de Pago</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Reset básico */
+    body, p, h1, h2, h3 {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #f4f4f4;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      color: #333333;
+    }
+    .container {
+      width: 100%;
+      padding: 20px 0;
+    }
+    .email-content {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .header {
+      background-color: #004080; /* Azul corporativo, cambia a tu color */
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .body {
+      padding: 30px 20px;
+      text-align: left;
+      color: #333333;
+    }
+    .body p {
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+    .footer {
+      background-color: #eeeeee;
+      color: #555555;
+      text-align: center;
+      padding: 15px;
+      font-size: 14px;
+    }
+    .btn-whatsapp {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #25D366;
+      color: #ffffff !important;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    @media only screen and (max-width: 600px) {
+      .header, .body, .footer {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="email-content">
+      
+      <!-- Encabezado -->
+      <div class="header">
+        Nombre de tu Empresa
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="body">
+        <h1>¡Pago Confirmado!</h1>
+        <p>Estimado/a <strong>[Nombre del Cliente]</strong>,</p>
+
+        <p>Hemos recibido correctamente su pago por la cantidad de <strong>$[Cantidad Pagada]</strong>.</p>
+
+        <p>Detalles de la transacción:</p>
+        <ul>
+          <li><strong>Fecha:</strong> [Fecha del Pago]</li>
+          <li><strong>Método de pago:</strong> [Método de Pago]</li>
+          <li><strong>Referencia:</strong> [Número de Referencia]</li>
+        </ul>
+
+        <p>Gracias por su confianza. Este correo confirma la recepción de su pago y el procesamiento correspondiente de su transacción.</p>
+      </div>
+
+      <!-- Pie de página -->
+      <div class="footer">
+        ¿Tienes dudas o necesitas aclaraciones?<br>
+        Contáctanos por WhatsApp:<br>
+        <a href="https://wa.me/521234567890" class="btn-whatsapp">Enviar mensaje</a>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
