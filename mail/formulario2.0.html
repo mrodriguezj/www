@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario 2.0 - Confirmación de Pago</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 20px;
+    }
+    .formulario {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .formulario h2 {
+      text-align: center;
+      color: #2E402D;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    input[readonly] {
+      background-color: #eee;
+      color: #555;
+    }
+    .pdf-preview {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+    button {
+      background-color: #2E402D;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #3f5c3b;
+    }
+  </style>
+</head>
+<body>
+
+<div class="formulario">
+  <h2>Enviar Comprobante de Pago</h2>
+  <form id="formPago" action="enviarCorreoPago3.1.php" method="POST" enctype="multipart/form-data">
+
+    <div class="form-group">
+      <label for="id_calendario">ID Calendario:</label>
+      <input type="text" id="id_calendario" name="id_calendario" required>
+    </div>
+
+    <div class="form-group">
+      <label for="lote">Número de Lote:</label>
+      <input type="text" id="lote" name="lote" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="cliente">Nombre del Cliente:</label>
+      <input type="text" id="cliente" name="cliente" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="correo">Correo electrónico:</label>
+      <input type="email" id="correo" name="correo" readonly>
+    </div>
+
+    <div class="form-group">
+      <label for="archivo_pdf">Seleccionar archivo PDF:</label>
+      <input type="file" id="archivo_pdf" name="archivo_pdf" accept="application/pdf" required>
+      <div class="pdf-preview" id="pdfPreview">Ningún archivo seleccionado.</div>
+    </div>
+
+    <div id="pdfViewerContainer" style="margin-top: 15px; text-align: center; display: none;">
+        <iframe id="pdfViewer" width="100%" height="300" style="border: 1px solid #ccc; border-radius: 4px;"></iframe>
+      </div>      
+
+    <div class="form-group" style="text-align: center;">
+      <button type="submit">Enviar Correo</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  const idInput = document.getElementById('id_calendario');
+  const loteInput = document.getElementById('lote');
+  const clienteInput = document.getElementById('cliente');
+  const correoInput = document.getElementById('correo');
+  const pdfInput = document.getElementById('archivo_pdf');
+  const pdfPreview = document.getElementById('pdfPreview');
+
+  idInput.addEventListener('change', () => {
+    const id = idInput.value.trim();
+    if (id) {
+      fetch(`buscar_info.php?id_calendario=${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            loteInput.value = data.lote;
+            clienteInput.value = data.nombre_cliente;
+            correoInput.value = data.correo_electronico;
+          } else {
+            alert('No se encontró información para ese ID.');
+            loteInput.value = '';
+            clienteInput.value = '';
+            correoInput.value = '';
+          }
+        })
+        .catch(() => {
+          alert('Error al consultar el calendario.');
+        });
+    }
+  });
+
+  pdfInput.addEventListener('change', () => {
+  const file = pdfInput.files[0];
+
+  if (file && file.type === 'application/pdf') {
+    pdfPreview.textContent = `Archivo seleccionado: ${file.name}`;
+
+    const fileURL = URL.createObjectURL(file);
+    const pdfViewer = document.getElementById('pdfViewer');
+    const pdfViewerContainer = document.getElementById('pdfViewerContainer');
+
+    pdfViewer.src = fileURL;
+    pdfViewerContainer.style.display = 'block';
+  } else {
+    pdfPreview.textContent = 'Ningún archivo seleccionado o el formato no es válido.';
+    document.getElementById('pdfViewerContainer').style.display = 'none';
+  }
+});
+
+</script>
+
+</body>
+</html>

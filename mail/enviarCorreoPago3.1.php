@@ -74,7 +74,8 @@ if (!$result) {
 
 // Variables desde consulta
 $nombreCliente = $result['nombre_cliente'];
-$correoCliente = 'auxmrodriguez@gmail.com'; // 🔧 Dirección manual para pruebas
+//$correoCliente = 'auxmrodriguez@gmail.com'; // 🔧 Dirección manual para pruebas
+$correoCliente = $result['correo_electronico'];
 $lote = $result['lote'];
 $categoriaPago = $result['categoria_pago'] ?? 'Sin categoría';
 $montoProgramado = number_format($result['monto_programado'], 2);
@@ -101,6 +102,8 @@ try {
 
     $mail->setFrom($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']);
     $mail->addAddress($correoCliente, 'Prueba Manual');
+    $mail->addBCC('auxmrodriguez@gmail.com');
+    $mail->addBCC('lcaamal@fomentoqroo.com');
     $mail->addBCC('auxiliarfomento@outlook.com');
 
     $mail->Subject = 'Confirmación de Pago - Bonaterra';
