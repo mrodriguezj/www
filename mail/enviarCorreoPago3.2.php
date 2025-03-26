@@ -68,8 +68,8 @@ if (!$result) {
 }
 
 $nombreCliente = $result['nombre_cliente'];
-//$correoCliente = $result['correo_electronico']; // ✅ Envío real
-$correoCliente = 'auxmrodriguez@gmail.com'; // 🔧 Dirección manual para pruebas
+$correoCliente = $result['correo_electronico']; // ✅ Envío real
+//$correoCliente = 'auxmrodriguez@gmail.com'; // 🔧 Dirección manual para pruebas
 
 $lote = $result['lote'];
 $categoriaPago = $result['categoria_pago'] ?? 'Sin categoría';
