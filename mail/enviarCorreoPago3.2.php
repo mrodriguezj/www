@@ -68,8 +68,8 @@ if (!$result) {
 }
 
 $nombreCliente = $result['nombre_cliente'];
-$correoCliente = $result['correo_electronico']; // ✅ Envío real
-//$correoCliente = 'auxmrodriguez@gmail.com'; // 🔧 Dirección manual para pruebas
+//$correoCliente = $result['correo_electronico']; // ✅ Envío real
+$correoCliente = 'avitaresidences@gmail.com'; // 🔧 Dirección manual para pruebas
 
 $lote = $result['lote'];
 $categoriaPago = $result['categoria_pago'] ?? 'Sin categoría';
@@ -89,14 +89,15 @@ try {
     $mail->SMTPAuth   = true;
     $mail->Username   = $_ENV['MAIL_USERNAME'];
     $mail->Password   = $_ENV['MAIL_PASSWORD'];
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // 👈 CAMBIO aquí
+    //$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; //Hostinger mail
     $mail->Port       = $_ENV['MAIL_PORT'];
     $mail->CharSet    = 'UTF-8';
     $mail->Encoding   = 'base64';
 
     $mail->setFrom($_ENV['MAIL_FROM_ADDRESS'], $_ENV['MAIL_FROM_NAME']);
     $mail->addAddress($correoCliente, $nombreCliente);
-    $mail->addBCC('auxiliarfomento@outlook.com');
+    //$mail->addBCC('auxiliarfomento@outlook.com');
     //$mail->addBCC('auditor@tudominio.com'); // Puedes agregar más BCC aquí
 
     $mail->Subject = 'Confirmación de Pago - Bonaterra';
@@ -136,7 +137,7 @@ try {
             die('❌ Archivo no es un PDF válido.');
         }
     }
-
+    //$mail->SMTPDebug = 2; MUESTRA EL LOG COMPLETO DE ERROR O EXITO DEL MENSAJE
     $mail->send();
     echo '✅ Correo enviado correctamente a ' . $correoCliente;
 
