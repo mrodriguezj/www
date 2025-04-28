@@ -57,19 +57,37 @@ async function cargarPagos() {
     } catch (error) {
         console.error('Error al cargar pagos:', error);
         alert('Ocurrió un error al obtener los datos.');
-    } finally {
+    }
+
+    finally {
         loader.style.display = 'none';
+    
+        // Inicializar DataTables
+        if (!$.fn.DataTable.isDataTable('#tabla-pagos')) {
+            $('#tabla-pagos').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excelHtml5'
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                }
+            });
+        } else {
+            $('#tabla-pagos').DataTable().destroy();
+            $('#tabla-pagos').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'excelHtml5'
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                }
+            });
+        }
     }
+    
+    
 }
 
-function siguientePagina() {
-    currentPage++;
-    cargarPagos();
-}
 
-function paginaAnterior() {
-    if (currentPage > 1) {
-        currentPage--;
-        cargarPagos();
-    }
-}

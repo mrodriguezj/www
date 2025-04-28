@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte de Cobranza Efectuada</title>
     <link rel="stylesheet" href="styles.css">
+
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+
 </head>
 <body>
 
@@ -29,7 +48,6 @@
         <button onclick="cargarPagos()">Buscar</button>
     </div>
 
-    <!-- Loader -->
     <div id="loader" class="loader" style="display: none;"></div>
 
     <div id="mensaje-inicial" class="mensaje">
@@ -41,7 +59,7 @@
         <thead>
             <tr>
                 <th>Lote</th>
-                <th>Cliente</th> <!-- 👈 Nueva columna -->
+                <th>Cliente</th>
                 <th>Fecha de Pago</th>
                 <th>Monto Pagado</th>
                 <th>Tipo de Pago</th>
@@ -50,14 +68,10 @@
         </thead>
         
         <tbody>
-            <!-- Aquí se llenan los datos dinámicamente -->
+
         </tbody>
     </table>
 
-    <div class="paginacion">
-        <button onclick="paginaAnterior()">Anterior</button>
-        <button onclick="siguientePagina()">Siguiente</button>
-    </div>
     
 
     <script src="script.js"></script>
