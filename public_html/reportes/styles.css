@@ -1,51 +1,89 @@
+/* General */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 20px;
+    color: #343a40;
 }
 
 h1 {
     text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
 }
 
+/* Filtros */
 .filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 20px;
-    text-align: center;
 }
 
 .filters input,
 .filters select,
 .filters button {
-    margin: 5px;
-    padding: 8px;
+    padding: 10px;
     font-size: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    min-width: 150px;
+    background-color: #fff;
+}
+
+.filters button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.filters button:hover {
+    background-color: #0056b3;
+}
+
+/* Tabla */
+#tabla-pagos_wrapper {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 #tabla-pagos {
     width: 100%;
     border-collapse: collapse;
-    background-color: #fff;
 }
 
 #tabla-pagos th, #tabla-pagos td {
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: 12px 15px;
     text-align: center;
 }
 
-#tabla-pagos th {
-    background-color: #007BFF;
+#tabla-pagos thead {
+    background-color: #007bff;
     color: white;
 }
 
+#tabla-pagos tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#tabla-pagos tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Loader */
 .loader {
-    border: 8px solid #f3f3f3; /* Color gris claro */
-    border-top: 8px solid #007BFF; /* Azul vibrante */
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #007bff;
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     animation: spin 1s linear infinite;
-    margin: 20px auto;
+    margin: 30px auto;
     display: block;
 }
 
@@ -54,13 +92,18 @@ h1 {
     100% { transform: rotate(360deg); }
 }
 
-.paginacion {
+/* Mensaje inicial */
+.mensaje {
     text-align: center;
-    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #6c757d;
 }
 
-.paginacion button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    font-size: 16px;
+/* Responsive */
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: center;
+    }
 }
