@@ -68,8 +68,8 @@ if (!$result) {
 }
 
 $nombreCliente = $result['nombre_cliente'];
-//$correoCliente = $result['correo_electronico']; // ✅ Envío real
-$correoCliente = 'avitaresidences@gmail.com'; // 🔧 Dirección manual para pruebas
+$correoCliente = $result['correo_electronico']; // ✅ Envío real
+//$correoCliente = 'avitaresidences@gmail.com'; // 🔧 Dirección manual para pruebas
 
 $lote = $result['lote'];
 $categoriaPago = $result['categoria_pago'] ?? 'Sin categoría';
@@ -137,7 +137,7 @@ try {
             die('❌ Archivo no es un PDF válido.');
         }
     }
-    //$mail->SMTPDebug = 2; MUESTRA EL LOG COMPLETO DE ERROR O EXITO DEL MENSAJE
+    //$mail->SMTPDebug = 2; //MUESTRA EL LOG COMPLETO DE ERROR O EXITO DEL MENSAJE
     $mail->send();
     echo '✅ Correo enviado correctamente a ' . $correoCliente;
 
