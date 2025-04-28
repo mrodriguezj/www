@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Cobranza Efectuada</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h1>Reporte de Cobranza Efectuada</h1>
+
+    <div class="filters">
+        <input type="date" id="fecha_inicio" placeholder="Fecha Inicio">
+        <input type="date" id="fecha_fin" placeholder="Fecha Fin">
+        <select id="categoria_pago">
+            <option value="">Todas las categorías</option>
+            <option value="Enganche">Enganche</option>
+            <option value="Contado">Contado</option>
+            <option value="Mensualidad">Mensualidad</option>
+            <option value="Anualidad">Anualidad</option>
+        </select>
+        <select id="metodo_pago">
+            <option value="">Todos los métodos</option>
+            <option value="Deposito">Depósito</option>
+            <option value="Efectivo">Efectivo</option>
+            <option value="Transferencia">Transferencia</option>
+        </select>
+        <button onclick="cargarPagos()">Buscar</button>
+    </div>
+
+    <!-- Loader -->
+    <div id="loader" class="loader" style="display: none;"></div>
+
+    <div id="mensaje-inicial" class="mensaje">
+        Por favor selecciona un rango de fechas y presiona <b>Buscar</b> para visualizar el reporte.
+      </div>
+      
+
+    <table id="tabla-pagos">
+        <thead>
+            <tr>
+                <th>Lote</th>
+                <th>Cliente</th> <!-- 👈 Nueva columna -->
+                <th>Fecha de Pago</th>
+                <th>Monto Pagado</th>
+                <th>Tipo de Pago</th>
+                <th>Método de Pago</th>
+            </tr>
+        </thead>
+        
+        <tbody>
+            <!-- Aquí se llenan los datos dinámicamente -->
+        </tbody>
+    </table>
+
+    <div class="paginacion">
+        <button onclick="paginaAnterior()">Anterior</button>
+        <button onclick="siguientePagina()">Siguiente</button>
+    </div>
+    
+
+    <script src="script.js"></script>
+</body>
+</html>

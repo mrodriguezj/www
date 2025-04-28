@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+}
+
+.filters {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.filters input,
+.filters select,
+.filters button {
+    margin: 5px;
+    padding: 8px;
+    font-size: 16px;
+}
+
+#tabla-pagos {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+#tabla-pagos th, #tabla-pagos td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+#tabla-pagos th {
+    background-color: #007BFF;
+    color: white;
+}
+
+.loader {
+    border: 8px solid #f3f3f3; /* Color gris claro */
+    border-top: 8px solid #007BFF; /* Azul vibrante */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+    display: block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.paginacion {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.paginacion button {
+    padding: 10px 20px;
+    margin: 0 5px;
+    font-size: 16px;
+}

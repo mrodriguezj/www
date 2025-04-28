@@ -83,6 +83,18 @@ switch ($request) {
         require 'endpoints/tablero/detalles_propiedades.php';
         break;
 
+    case 'cobranza_efectuada':
+        require 'endpoints/reportes/cobranza_efectuada.php';
+        break;
+        
+    case 'proyeccion_cobranza':
+        require 'endpoints/reportes/proyeccion_cobranza.php';
+        break;
+        
+    case 'adeudos':
+        require 'endpoints/reportes/adeudos.php';
+        break;
+
     default:
         echo json_encode(["error" => "Endpoint no válido"]);
         break;
